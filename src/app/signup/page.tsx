@@ -1,19 +1,28 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { getHotels, Hotel, register } from "../../actions/actions";
+import { getHotel, Hotel, register } from "../../actions/actions";
 import toast from 'react-hot-toast';
 
 export default function SignUpPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [hotels, setHotels] = useState<Hotel[]>([]);
-  const [hotelId, setHotelId] = useState<string>("");
+  const [hotelId, setHotelId] = useState<string>('');
+  const [hotelName, setHotelName] = useState<string | null>(null);
   const [error, setError] = useState("");
   const router = useRouter();
 
   useEffect(() => {
-    getHotels().then(setHotels).catch(() => setHotels([]));
+    const paramHotelId = typeof window !== 'undefined' ? (new URLSearchParams(window.location.search).get('hotelId')) : null;
+    const storedHotelId = typeof window !== 'undefined' ? localStorage.getItem('hotelId') : null;
+    const id = paramHotelId || storedHotelId || '';
+    if (id) {
+      setHotelId(id);
+      const storedHotelName = typeof window !== 'undefined' ? localStorage.getItem('hotelName') : null;
+      if (storedHotelName) setHotelName(storedHotelName);
+      else getHotel(id).then(h => { if (h?.name) setHotelName(h.name); }).catch(() => {});
+      try { router.replace(`/signup?hotelId=${encodeURIComponent(id)}`); } catch (e) {}
+    }
   }, []);
 
   function handleSignUp(e: React.FormEvent) {
@@ -77,17 +86,11 @@ export default function SignUpPage() {
           />
         </div>
 
-        <label className="block text-sm font-medium mb-2">Select Hotel</label>
-        <select
-          value={hotelId}
-          onChange={(e) => setHotelId(e.target.value)}
-          className="w-full p-3 border rounded mb-4"
-        >
-          <option value="">-- choose a hotel --</option>
-          {hotels.map(h => (
-            <option key={h.id} value={h.id}>{h.name} — {h.city}</option>
-          ))}
-        </select>
+        {/* Hotel is determined by URL or stored hotelId */}
+        <div className="mb-4">
+          <label className="block text-sm font-medium mb-1">Hotel</label>
+          <div className="w-full p-3 border rounded bg-gray-50">{hotelName ?? (hotelId ? `Hotel ${hotelId}` : 'No hotel selected')}</div>
+        </div>
 
         {error && <div className="text-red-500 mb-4 text-sm">{error}</div>}
         <button type="submit" className="w-full bg-gradient-to-r from-pink-500 to-amber-400 text-white py-3 rounded-full font-semibold shadow-lg">Sign Up</button>

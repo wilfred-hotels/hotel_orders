@@ -2,10 +2,14 @@
 "use client";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { useRouter } from 'next/navigation';
+import { toast } from 'react-hot-toast';
 import { getHotels } from "../actions/actions";
 
 export default function HotelLandingPage() {
   const [hotels, setHotels] = useState<any[]>([]);
+  const [navigating, setNavigating] = useState<string | null>(null);
+  const router = useRouter();
   useEffect(() => {
     getHotels().then(setHotels).catch((e) => { console.error(e); setHotels([]); });
   }, []);
@@ -15,11 +19,7 @@ export default function HotelLandingPage() {
         <h1 className="text-4xl font-extrabold text-center mb-8 text-rose-600">Select a Hotel</h1>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
           {hotels.map((hotel: any) => (
-            <Link
-              key={hotel.id}
-              href={`/hotel/${hotel.id}`}
-              className="block bg-white rounded-2xl shadow-xl hover:shadow-rose-200 transition overflow-hidden"
-            >
+            <div key={hotel.id} className="block bg-white rounded-2xl shadow-xl hover:shadow-rose-200 transition overflow-hidden">
               <img src={hotel.imageUrl || hotel.image} alt={hotel.name} className="w-full h-48 object-cover" />
               <div className="p-6">
                 <div className="flex items-start justify-between">
@@ -40,10 +40,34 @@ export default function HotelLandingPage() {
                 </div>
 
                 <div className="mt-4">
-                  <span className="inline-block bg-amber-100 text-amber-700 px-3 py-1 rounded-full text-xs font-semibold">View Menu</span>
+                  <button
+                    onClick={async (e) => {
+                      e.preventDefault();
+                      if (navigating) return; // prevent double press
+                      setNavigating(hotel.id);
+                      localStorage.setItem("hotelId",hotel.id)
+                      // show a blue toast indicating navigation
+                      toast('Navigating…', { style: { background: '#e6f0ff', color: '#0b60ff' } });
+                      try {
+                        await router.push(`/hotel/${hotel.id}`);
+                      } finally {
+                        setNavigating(null);
+                      }
+                    }}
+                    className="inline-flex items-center gap-2 bg-amber-100 text-amber-700 px-3 py-1 rounded-full text-xs font-semibold"
+                  >
+                    {navigating === hotel.id ? (
+                      <svg className="animate-spin h-4 w-4 text-amber-700" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                      </svg>
+                    ) : (
+                      'View Menu'
+                    )}
+                  </button>
                 </div>
               </div>
-            </Link>
+            </div>
           ))}
         </div>
       </div>

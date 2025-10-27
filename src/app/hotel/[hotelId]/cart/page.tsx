@@ -24,7 +24,7 @@ export default function CartPage() {
   const params = useParams();
   const hotelId = params?.hotelId;
   const [cartItems, setCartItems] = useState<any[]>([]);
-  const [tempQty, setTempQty] = useState<Record<number, string>>({});
+  const [tempQty, setTempQty] = useState<Record<string, string>>({});
   const [cartId, setCartId] = useState<string | undefined>(undefined);
 
   // Fetch cart from backend on mount
@@ -39,11 +39,13 @@ export default function CartPage() {
       .then((itemsOrObj) => {
         // backend may return array or { items: [], id: cartId }
         const arr = Array.isArray(itemsOrObj) ? itemsOrObj : (itemsOrObj && Array.isArray((itemsOrObj as any).items) ? (itemsOrObj as any).items : []);
-        const possibleCartId = itemsOrObj && typeof (itemsOrObj as any).id === 'string' ? (itemsOrObj as any).id : (itemsOrObj && (itemsOrObj as any).cartId ? (itemsOrObj as any).cartId : undefined);
+        // cart id may be at top-level (id or cartId) or on each item as cartId
+        const possibleCartId = Array.isArray(itemsOrObj)
+          ? ((itemsOrObj as any)[0]?.cartId || undefined)
+          : (itemsOrObj && (itemsOrObj as any).id ? (itemsOrObj as any).id : (itemsOrObj && (itemsOrObj as any).cartId ? (itemsOrObj as any).cartId : undefined));
         if (possibleCartId) setCartId(possibleCartId);
-        console.log(arr)
         setCartItems(arr);
-        setTempQty(Object.fromEntries(arr.map((item: any) => [item.productId, String(item.quantity)])));
+        setTempQty(Object.fromEntries(arr.map((item: any) => [String(item.productId), String(item.quantity)])));
       })
       .catch((e) => {
         console.error(e);
@@ -52,11 +54,11 @@ export default function CartPage() {
   }, []);
 
   // Handle controlled input typing (temporary)
-  function handleQtyChange(productId: number, value: string) {
+  function handleQtyChange(productId: string, value: string) {
     setTempQty((prev) => ({ ...prev, [productId]: value }));
   }
 
-  async function handleDelete(productId: number) {
+  async function handleDelete(productId: string) {
     const item = cartItems.find((i) => i.productId === productId);
     if (!item) return;
     if (!confirm(`Remove ${item.product?.name || 'this item'} from your basket?`)) return;
@@ -80,7 +82,7 @@ export default function CartPage() {
   }
 
   // Handle blur or Enter press — apply validated quantity
-  async function applyQty(productId: number) {
+  async function applyQty(productId: string) {
     const rawValue = tempQty[productId]?.trim();
     const item = cartItems.find((i) => i.productId === productId);
     const available = item?.product?.stock ?? Infinity;
@@ -109,7 +111,7 @@ export default function CartPage() {
   }
 
   // Actual update logic — localStorage sync
-  async function update(productId: number, qty: number) {
+  async function update(productId: string, qty: number) {
     const item = cartItems.find((i) => i.productId === productId);
     if (!item) return;
     const userId = getUserIdFromLocalStorage();
@@ -171,7 +173,7 @@ export default function CartPage() {
   }));
 
   // Helper: compute the currently displayed quantity using tempQty (typing) or the committed qty
-  function getDisplayQty(productId: number, committedQty: number) {
+  function getDisplayQty(productId: string, committedQty: number) {
     const raw = tempQty[productId];
     if (raw === undefined || raw === "") return committedQty;
     const n = Number(raw);
@@ -233,8 +235,8 @@ export default function CartPage() {
           <div className="flex items-center justify-between pt-6 border-t border-gray-100">
             <div className="text-sm text-gray-600">Items: {detailed.length}</div>
             <div>
-              <button onClick={submitOrder} disabled={isPlacingOrder} className={`px-6 py-3 rounded-xl font-semibold text-white ${isPlacingOrder ? 'bg-gray-400' : 'bg-rose-600 hover:bg-rose-700'}`}>
-                {isPlacingOrder ? 'Placing Order...' : 'Confirm Order'}
+              <button onClick={() => router.push(`/hotel/${hotelId}/checkout?cartId=${encodeURIComponent(cartId || '')}`)} className={`px-6 py-3 rounded-xl font-semibold text-white bg-rose-600 hover:bg-rose-700`}>
+                Go to payment
               </button>
             </div>
           </div>

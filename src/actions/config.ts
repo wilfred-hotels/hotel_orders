@@ -15,6 +15,7 @@ export const API = {
   items: `${BASE}/cart/items`,
   item: (itemId: number) => `${BASE}/cart/items/${itemId}`,
   itemUpdate: (itemId: number, userId: string | number) => `${BASE}/cart/items/${itemId}?userId=${userId}`,
+  payments_mpesa_initiate: `${BASE}/payments/mpesa/initiate`,
   base: BASE,
 };
 

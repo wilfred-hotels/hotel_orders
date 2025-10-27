@@ -1,19 +1,34 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { getHotels, Hotel, login } from "../../actions/actions";
+import { getHotel, Hotel, login } from "../../actions/actions";
 import toast from 'react-hot-toast';
 
 export default function SignInPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [hotels, setHotels] = useState<Hotel[]>([]);
-  const [hotelId, setHotelId] = useState<string>("");
+  const [hotelName, setHotelName] = useState<string | null>(null);
+  const [hotelId, setHotelId] = useState<string>('');
   const [error, setError] = useState("");
   const router = useRouter();
 
   useEffect(() => {
-    getHotels().then(setHotels).catch(() => setHotels([]));
+    // prefer hotelId from URL query param, otherwise fall back to localStorage
+    const paramHotelId = typeof window !== 'undefined' ? (new URLSearchParams(window.location.search).get('hotelId')) : null;
+    const storedHotelId = typeof window !== 'undefined' ? localStorage.getItem('hotelId') : null;
+    const id = paramHotelId || storedHotelId || '';
+    if (id) {
+      setHotelId(id);
+      // try to get hotel name from localStorage first
+      const storedHotelName = typeof window !== 'undefined' ? localStorage.getItem('hotelName') : null;
+      if (storedHotelName) {
+        setHotelName(storedHotelName);
+      } else {
+        getHotel(id).then(h => { if (h?.name) setHotelName(h.name); }).catch(() => {});
+      }
+      // ensure URL contains hotelId for clarity
+      try { router.replace(`/signin?hotelId=${encodeURIComponent(id)}`); } catch (e) {}
+    }
   }, []);
 
   function handleSignIn(e: React.FormEvent) {
@@ -40,6 +55,12 @@ export default function SignInPage() {
             localStorage.setItem('role', res.user.role || '');
             localStorage.setItem('hotelId', res.user.hotelId || '');
           }
+          // show a blue toast while navigating to hotel menu
+          toast.custom(() => (
+            <div style={{ padding: '8px 12px', background: '#DBEAFE', color: '#1E3A8A', borderRadius: 8 }}>
+              Navigating to menu…
+            </div>
+          ));
           router.replace(`/hotel/${hotelId}`);
           return res;
         }
@@ -81,17 +102,11 @@ export default function SignInPage() {
           />
         </div>
 
-        <label className="block text-sm font-medium mb-2">Hotel</label>
-        <select
-          value={hotelId}
-          onChange={(e) => setHotelId(e.target.value)}
-          className="w-full p-3 border rounded mb-4"
-        >
-          <option value="">-- choose a hotel --</option>
-          {hotels.map(h => (
-            <option key={h.id} value={h.id}>{h.name} — {h.city}</option>
-          ))}
-        </select>
+        {/* Hotel is determined by URL or stored hotelId */}
+        <div className="mb-4">
+          <label className="block text-sm font-medium mb-1">Hotel</label>
+          <div className="w-full p-3 border rounded bg-gray-50">{hotelName ?? (hotelId ? `Hotel ${hotelId}` : 'No hotel selected')}</div>
+        </div>
 
         <button type="submit" className="w-full bg-gradient-to-r from-amber-400 to-pink-500 text-white py-3 rounded-full font-semibold shadow-lg">Sign In</button>
 

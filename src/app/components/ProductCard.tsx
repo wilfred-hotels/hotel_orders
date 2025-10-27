@@ -2,14 +2,16 @@
 
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { ShoppingBag } from "lucide-react";
+import { ShoppingBag, Loader2 } from "lucide-react";
 
 export default function ProductCard({
   product,
   onAdd,
+  isAdding,
 }: {
   product: any;
   onAdd: (id: number) => void;
+  isAdding?: boolean;
 }) {
   return (
     <motion.div
@@ -71,8 +73,8 @@ export default function ProductCard({
             disabled={product.stock <= 0}
             className={`flex items-center gap-2 px-5 py-2 rounded-full font-medium transition-all duration-300 ${product.stock > 0 ? 'btn-primary' : 'bg-gray-300 text-gray-500 cursor-not-allowed'}`}
           >
-            <ShoppingBag size={18} />
-            {product.stock > 0 ? "Add to basket" : "Unavailable"}
+            {isAdding ? <Loader2 className="animate-spin" size={18} /> : <ShoppingBag size={18} />}
+            {product.stock > 0 ? (isAdding ? "Adding..." : "Add to basket") : "Unavailable"}
           </motion.button>
         </div>
       </div>

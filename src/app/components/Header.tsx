@@ -17,9 +17,26 @@ export default function Header({ hotel }: { hotel?: { name?: string; address?: s
   const [user, setUser] = useState<{ name?: string } | null>(null);
   const [isHydrated, setIsHydrated] = useState(false);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+  const [hotelData, setHotelData] = useState<typeof hotel | null | undefined>(hotel ?? undefined);
   const router = useRouter();
 
   useEffect(() => {
+    // If header was not provided a hotel prop (root layout), try to fetch hotel client-side
+    (async () => {
+      if (!hotelData && hotelId) {
+        try {
+          const base = process.env.NEXT_PUBLIC_API_BASE || '';
+          const res = await fetch(`${base}/hotels/${hotelId}`);
+          if (res.ok) {
+            const data = await res.json();
+            setHotelData(data || null);
+          }
+        } catch (e) {
+          // ignore
+        }
+      }
+    })();
+
     // Run hydration and auth check flow
     (async () => {
       setIsHydrated(true);
@@ -110,7 +127,7 @@ export default function Header({ hotel }: { hotel?: { name?: string; address?: s
 
   const navLinks = hotelId
     ? [
-        { href: `/hotel/${hotelId}/menu`, label: "Menu", icon: <Utensils size={18} /> },
+        { href: `/hotel/${hotelId}`, label: "Menu", icon: <Utensils size={18} /> },
         { href: `/hotel/${hotelId}/orders`, label: "Orders", icon: <Coffee size={18} /> },
         { href: `/hotel/${hotelId}/cart`, label: "Basket", icon: <ShoppingCart size={18} /> },
       ]
@@ -128,19 +145,20 @@ export default function Header({ hotel }: { hotel?: { name?: string; address?: s
         {/* ===== Logo Area ===== */}
         <Link href="/" className="flex items-center gap-3 group">
           <motion.div
-            whileHover={{ rotate: 12, scale: 1.1 }}
+            whileHover={{ rotate: 12, scale: 1.04 }}
             transition={{ type: "spring", stiffness: 300 }}
-            className={`p-2 rounded-full shadow-md
+            className={`p-1 rounded-full shadow-md flex items-center justify-center overflow-hidden
               ${theme === "dark" 
                 ? "bg-gradient-to-tr from-amber-400/30 to-pink-500/40"
                 : "bg-gradient-to-tr from-amber-100 to-pink-100"}
             `}
           >
-            <Utensils className="text-rose-500" size={22} />
+            {/* use public/eCom.jpeg as logo */}
+            <img src="/eCom.jpeg" alt="eCom logo" className="w-9 h-9 object-cover rounded-full" />
           </motion.div>
           <div>
             <div className={`text-lg font-bold ${theme === "dark" ? "text-white" : "text-slate-900"}`}>
-              {hotel ? hotel.name : "Grand Harbor Hotel"}
+              {hotelData?.name ?? 'Your Hotels'}
             </div>
             <div className={`text-sm ${theme === "dark" ? "text-slate-300" : "text-muted"}`}>
               Dining & Room Service
@@ -194,7 +212,7 @@ export default function Header({ hotel }: { hotel?: { name?: string; address?: s
                       localStorage.removeItem("refreshToken");
                       setUser(null);
                       // redirect to home or hotel menu
-                      if (hotelId) router.replace(`/hotel/${hotelId}`);
+                      if (hotelId) router.replace(`/`);
                       else router.replace('/');
                 }}
               >Sign Out</button>

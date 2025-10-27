@@ -11,6 +11,7 @@ export default function HotelMenuPage() {
   const { hotelId } = useParams();
   const router = useRouter();
   const [products, setProducts] = useState<Product[]>([]);
+  const [addingIds, setAddingIds] = useState<number[]>([]);
   const [hotel, setHotel] = useState<Awaited<ReturnType<typeof getHotel>> | null>(null);
   useEffect(() => {
     if (!hotelId) return;
@@ -20,6 +21,7 @@ export default function HotelMenuPage() {
   // Check login by access token presence
   const accessToken = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
   async function handleAddToCart(id: number) {
+    if (addingIds.includes(id)) return; // already adding
     if (!accessToken) {
       router.push("/signin");
       return;
@@ -29,11 +31,16 @@ export default function HotelMenuPage() {
       router.push("/signin");
       return;
     }
+
+    setAddingIds((s) => [...s, id]);
+    const toastId = toast.loading('Adding to basket...', { style: { background: '#DBEAFE', color: '#1E3A8A' } });
     try {
       await addItemsToCart(userId, accessToken, [{ productId: id, quantity: 1 }]);
-      toast.success("Added to basket!");
+      toast.success('Added to basket!', { id: toastId });
     } catch (e) {
-      toast.error("Failed to add to basket");
+      toast.error('Failed to add to basket', { id: toastId });
+    } finally {
+      setAddingIds((s) => s.filter((x) => x !== id));
     }
   }
   return (
@@ -76,7 +83,7 @@ export default function HotelMenuPage() {
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {products.map((p) => (
-          <ProductCard key={p.id} product={p} onAdd={() => handleAddToCart(p.id)} />
+          <ProductCard key={p.id} product={p} onAdd={() => handleAddToCart(p.id)} isAdding={addingIds.includes(p.id)} />
         ))}
       </div>
     </div>
