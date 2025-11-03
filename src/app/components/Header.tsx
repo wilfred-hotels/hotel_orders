@@ -18,6 +18,7 @@ export default function Header({ hotel }: { hotel?: { name?: string; address?: s
   const [isHydrated, setIsHydrated] = useState(false);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
   const [hotelData, setHotelData] = useState<typeof hotel | null | undefined>(hotel ?? undefined);
+  const [cartCount, setCartCount] = useState<number>(0);
   const router = useRouter();
 
   useEffect(() => {
@@ -115,6 +116,28 @@ export default function Header({ hotel }: { hotel?: { name?: string; address?: s
         setIsCheckingAuth(false);
       }
     })();
+
+    // keep cart count in header (from localStorage or server when available)
+    function updateCartCountFromLocal() {
+      try {
+        if (typeof window === 'undefined') return;
+        const raw = localStorage.getItem('cart') || '{}';
+        const parsed = JSON.parse(raw || '{}');
+        if (parsed && typeof parsed === 'object') {
+          const sum = Object.values(parsed).reduce((s: number, v: any) => s + (Number(v) || 0), 0);
+          setCartCount(sum);
+          return;
+        }
+      } catch (e) {
+        // ignore
+      }
+      setCartCount(0);
+    }
+
+    updateCartCountFromLocal();
+    if (typeof window !== 'undefined') window.addEventListener('storage', updateCartCountFromLocal);
+    // cleanup listener
+    return () => { if (typeof window !== 'undefined') window.removeEventListener('storage', updateCartCountFromLocal); };
   }, []);
 
   function toggleTheme() {
@@ -128,8 +151,9 @@ export default function Header({ hotel }: { hotel?: { name?: string; address?: s
   const navLinks = hotelId
     ? [
         { href: `/hotel/${hotelId}`, label: "Menu", icon: <Utensils size={18} /> },
-        { href: `/hotel/${hotelId}/orders`, label: "Orders", icon: <Coffee size={18} /> },
-        { href: `/hotel/${hotelId}/cart`, label: "Basket", icon: <ShoppingCart size={18} /> },
+        // Orders & Basket should be visible even when not logged in
+        { href: user ? `/hotel/${hotelId}/orders` : `/signin?redirect=/hotel/${hotelId}/orders`, label: "Orders", icon: <Coffee size={18} /> },
+        { href: `/hotel/${hotelId}/cart`, label: "Basket", icon: <ShoppingCart size={18} />, count: cartCount },
       ]
     : [];
 
@@ -195,7 +219,10 @@ export default function Header({ hotel }: { hotel?: { name?: string; address?: s
                     }`}
                   >
                     {link.icon}
-                    {link.label}
+                      <span className="ml-1">{link.label}</span>
+                      {('count' in link) && (link as any).count > 0 && (
+                        <span className="ml-2 inline-flex items-center justify-center bg-rose-600 text-white text-xs px-2 py-0.5 rounded-full">{(link as any).count}</span>
+                      )}
                   </Link>
                 );
               })}
