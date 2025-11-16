@@ -62,7 +62,7 @@ export default function SignUpPage() {
     <div className="min-h-[70vh] flex items-center justify-center bg-hero bg-cover bg-center">
       <form onSubmit={handleSignUp} className="backdrop-blur-sm bg-white/85 p-8 rounded-3xl shadow-2xl w-full max-w-lg border border-white/30">
         <div className="flex items-center gap-4 mb-6">
-          <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-pink-500 to-amber-400 flex items-center justify-center text-white text-2xl font-bold">RS</div>
+          <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-blue-400 to-blue-600 flex items-center justify-center text-white text-2xl font-bold">RS</div>
           <div>
             <h1 className="text-3xl font-extrabold">Create your account</h1>
             <p className="text-sm text-slate-600">Join a hotel's staff or order manager to get started</p>
@@ -93,10 +93,10 @@ export default function SignUpPage() {
         </div>
 
         {error && <div className="text-red-500 mb-4 text-sm">{error}</div>}
-        <button type="submit" className="w-full bg-gradient-to-r from-pink-500 to-amber-400 text-white py-3 rounded-full font-semibold shadow-lg">Sign Up</button>
+  <button type="submit" className="w-full bg-gradient-to-r from-blue-400 to-blue-600 text-white py-3 rounded-full font-semibold shadow-lg">Sign Up</button>
 
         <div className="mt-4 text-center text-sm">
-          Already have an account? <a href="/signin" className="text-pink-600 underline">Sign In</a>
+          Already have an account? <a href="/signin" className="text-blue-600 underline">Sign In</a>
         </div>
       </form>
     </div>

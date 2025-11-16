@@ -48,7 +48,7 @@ export default function HotelMenuPage() {
       <div className="mb-6">
         <Link
           href="/"
-          className="inline-block px-4 py-2 rounded-full bg-amber-100 text-amber-700 font-semibold shadow hover:bg-amber-200 transition"
+          className="inline-block px-4 py-2 rounded-full bg-blue-100 text-blue-700 font-semibold shadow hover:bg-blue-200 transition"
         >
           ← Back to Hotels
         </Link>

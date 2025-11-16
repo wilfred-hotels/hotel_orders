@@ -9,53 +9,67 @@
   --bg: #ffffff;
   --muted: #6b7280;
   --fg: #0f172a;
-  --brand-1: #0ea5e9;
-  --brand-2: #6366f1;
+  /* Primary brand colors (more intense) */
+  --brand-blue: #0066FF; /* pure intense blue */
+  --brand-purple: #7C3AED; /* purple */
+  --brand-yellow: #F59E0B; /* yellow */
+  --brand-green: #10B981; /* green */
+  --brand-1: var(--brand-blue);
+  --brand-2: var(--brand-purple);
+  /* UI settings applied via SettingsContext */
+  --base-font-size: 16px;
 }
 
 /* Explicit theme classes. We DO NOT automatically follow the browser preference. */
-.theme-dark {
-  --bg: #f8fafc;
-  --muted: #6b7280;
-  --fg: #0f172a;
-  --brand-1: #60a5fa;
-  --brand-2: #6366f1;
-  /* keep backgrounds light but cooler tones */
-  --page-bg: linear-gradient(180deg,#f8fafc,#f1f5f9);
-  --hero-bg: linear-gradient(180deg, rgba(240,249,255,0.9), rgba(248,250,252,0.9)), url('https://source.unsplash.com/1600x900/?hotel,day');
-  /* header background applied across the page */
-  --header-bg: linear-gradient(90deg, rgba(96,165,250,0.12), rgba(99,102,241,0.08));
-  /* card/button variables for dark theme (darker cards, light text) */
-  --card-bg: linear-gradient(180deg,#0b1220,#071029);
-  --card-border: 1px solid rgba(255,255,255,0.04);
-  --card-text: #e6eef8;
-  --card-muted: #94a3b8;
-  --available-color: #60a5fa;
-  --unavailable-color: #fca5a5;
-  --btn-bg: linear-gradient(90deg,#6366f1,#60a5fa);
-  --btn-text: #ffffff;
-}
-
 .theme-light {
   --bg: #ffffff;
   --muted: #6b7280;
   --fg: #0f172a;
-  --brand-1: #0ea5e9;
-  --brand-2: #6366f1;
-  --page-bg: linear-gradient(180deg,#fff7ed,#fff);
-  --hero-bg: linear-gradient(180deg, rgba(255,252,240,0.95), rgba(255,250,242,0.95)), url('https://source.unsplash.com/1600x900/?hotel,lobby');
+  --brand-blue: #0066FF;
+  --brand-purple: #7C3AED;
+  --brand-yellow: #F59E0B;
+  --brand-green: #10B981;
+  --brand-1: var(--brand-blue);
+  --brand-2: var(--brand-purple);
+  --page-bg: linear-gradient(180deg,#f8fbff,#f1f7ff);
+  --hero-bg: linear-gradient(180deg, rgba(15,81,199,0.06), rgba(37,99,235,0.04));
   /* header background applied across the page */
-  --header-bg: linear-gradient(90deg, rgba(255,229,231,0.4), rgba(255,240,219,0.4));
+  --header-bg: linear-gradient(90deg, rgba(11,116,255,0.10), rgba(37,99,235,0.06));
   /* card/button variables for light theme (light cards, dark text) */
-  --card-bg: linear-gradient(180deg,#ffffff,#fffaf0);
-  --card-border: 1px solid rgba(0,0,0,0.04);
+  --card-bg: linear-gradient(180deg,#ffffff,#f8fbff);
+  --card-border: 1px solid rgba(11,74,154,0.04);
   --card-text: #0f172a;
   --card-muted: #6b7280;
-  --available-color: #16a34a;
+  --available-color: #0b74ff;
   --unavailable-color: #ef4444;
-  --btn-bg: linear-gradient(90deg,#fb7185,#f59e0b);
+  --btn-bg: linear-gradient(90deg,#0b74ff,#2563eb);
   --btn-text: #ffffff;
 }
+
+/* Utility text color classes for brand colors */
+.text-brand-blue { color: var(--brand-blue) !important; }
+.text-brand-purple { color: var(--brand-purple) !important; }
+.text-brand-yellow { color: var(--brand-yellow) !important; }
+.text-brand-green { color: var(--brand-green) !important; }
+
+/* Utility background helpers */
+.bg-brand-blue { background: var(--brand-blue) !important; color: #fff !important; }
+.ring-brand-blue { box-shadow: 0 0 0 4px rgba(0,102,255,0.12); }
+
+/* Compact mode reduces spacing and font sizes globally */
+.compact-mode {
+  --base-font-size: 14px;
+}
+
+/* Marquee animation used by header/footer */
+@keyframes marquee {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
+}
+.animate-marquee { display: inline-block; animation: marquee 18s linear infinite; }
+
+/* Apply base font size */
+html { font-size: var(--base-font-size); }
 
 body {
   /* compose header background over page background so header style is visible across body */
@@ -87,7 +101,7 @@ body {
 * { transition: color 220ms ease, background 220ms ease, border-color 220ms ease; }
 
 .container {
-  max-width: 1100px;
+  max-width: auto;
 }
 
 .text-muted { color: var(--muted); }
@@ -111,7 +125,7 @@ body {
 .hero-title { font-size: 3rem; line-height: 1.05; }
 .hero-sub { font-size: 1.125rem; color: #475569; }
 
-.text-accent { color: #f97316; }
+.text-accent { color: var(--brand-1); }
 
 /* subtle card background for light/dark */
 .card {
@@ -120,7 +134,7 @@ body {
 
 /* globals.css */
 .card-glow:hover {
-  box-shadow: 0 8px 24px rgba(250, 204, 21, 0.25);
+  box-shadow: 0 8px 24px rgba(11,116,255,0.18);
   transform: translateY(-3px);
   transition: all 0.3s ease;
 }

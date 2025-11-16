@@ -196,7 +196,7 @@ export default function CartPage() {
         </div>
         <div className="text-right">
             <div className="text-lg font-semibold text-gray-600">Total</div>
-            <div className="text-2xl font-bold text-rose-600">${total.toFixed(2)}</div>
+            <div className="text-2xl font-bold text-blue-600">${total.toFixed(2)}</div>
           </div>
       </div>
 
@@ -218,7 +218,7 @@ export default function CartPage() {
               <div className="flex items-center gap-3">
                 <input
                   type="number"
-                  className="w-20 p-2 border border-gray-200 rounded-md text-center focus:ring-2 focus:ring-rose-200 outline-none transition"
+                  className="w-20 p-2 border border-gray-200 rounded-md text-center focus:ring-2 focus:ring-blue-200 outline-none transition"
                   value={tempQty[d.id] ?? String(d.qty)}
                   min={1}
                   max={d.product?.stock ?? undefined}
@@ -227,7 +227,7 @@ export default function CartPage() {
                   onKeyDown={(e) => e.key === "Enter" && applyQty(d.id)}
                 />
                 <div className="font-semibold text-gray-800">${((d.product?.price ?? 0) * displayQty).toFixed(2)}</div>
-                <button onClick={() => handleDelete(d.id)} className="text-sm text-rose-500 hover:text-rose-700">Remove</button>
+                <button onClick={() => handleDelete(d.id)} className="text-sm text-blue-500 hover:text-blue-700">Remove</button>
               </div>
             </div>
           )})}
@@ -235,7 +235,7 @@ export default function CartPage() {
           <div className="flex items-center justify-between pt-6 border-t border-gray-100">
             <div className="text-sm text-gray-600">Items: {detailed.length}</div>
             <div>
-              <button onClick={() => router.push(`/hotel/${hotelId}/checkout?cartId=${encodeURIComponent(cartId || '')}`)} className={`px-6 py-3 rounded-xl font-semibold text-white bg-rose-600 hover:bg-rose-700`}>
+              <button onClick={() => router.push(`/hotel/${hotelId}/checkout?cartId=${encodeURIComponent(cartId || '')}`)} className={`px-6 py-3 rounded-xl font-semibold text-white bg-blue-600 hover:bg-blue-700`}>
                 Go to payment
               </button>
             </div>

@@ -25,7 +25,11 @@ export default function Footer() {
 
   return (
     <footer className="text-sm text-center py-6 text-slate-600">
-      © {new Date().getFullYear()} {hotel?.name ?? 'Hotel e-comm'}
+      <div className="overflow-hidden">
+        <div className="animate-marquee whitespace-nowrap text-blue-600">
+          © {new Date().getFullYear()} {hotel?.name ?? 'Food Order'} — Fresh meals, delivered fast — &nbsp;
+        </div>
+      </div>
     </footer>
   );
 }

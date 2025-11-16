@@ -6,5 +6,6 @@ export * from './hotels';
 export * from './orders';
 export * from './cart';
 export * from './payments';
+export * from './guests';
 
 
