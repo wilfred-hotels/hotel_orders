@@ -1,232 +1,134 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
-import { ShoppingCart, Coffee, Utensils } from "lucide-react";
-import { useEffect, useState } from "react";
-import { toast } from 'react-hot-toast';
+import { ShoppingCart, Coffee } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from 'next/navigation';
-import { authCheck, authRefresh } from "../../actions/actions";
 
-export default function Header({ hotel }: { hotel?: { name?: string; address?: string; city?: string; country?: string; phone?: string } }) {
+export default function Header() {
   const path = usePathname();
-  const params = useParams();
-  const hotelId = params?.hotelId;
-  const [theme, setTheme] = useState<"light" | "dark">("light");
-  const [user, setUser] = useState<{ name?: string } | null>(null);
+  const headerRef = useRef<HTMLElement | null>(null);
   const [isHydrated, setIsHydrated] = useState(false);
-  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
-  const [hotelData, setHotelData] = useState<typeof hotel | null | undefined>(hotel ?? undefined);
+  const [cartCount, setCartCount] = useState<number>(0);
   const router = useRouter();
 
   useEffect(() => {
-    // If header was not provided a hotel prop (root layout), try to fetch hotel client-side
-    (async () => {
-      if (!hotelData && hotelId) {
-        try {
-          const base = process.env.NEXT_PUBLIC_API_BASE || '';
-          const res = await fetch(`${base}/hotels/${hotelId}`);
-          if (res.ok) {
-            const data = await res.json();
-            setHotelData(data || null);
-          }
-        } catch (e) {
-          // ignore
-        }
-      }
-    })();
+    // Run hydration and force light class
+    setIsHydrated(true);
+    try { document.documentElement.classList.remove("theme-dark"); } catch (e) { /* ignore */ }
+    try { document.documentElement.classList.add("theme-light"); } catch (e) { /* ignore */ }
 
-    // Run hydration and auth check flow
-    (async () => {
-      setIsHydrated(true);
-      const stored = (localStorage.getItem("theme") as "light" | "dark") || "light";
-      setTheme(stored);
-      document.documentElement.classList.remove("theme-light", "theme-dark");
-      document.documentElement.classList.add(stored === "dark" ? "theme-dark" : "theme-light");
-
-      // Auth flow: check access token -> refresh if needed
-      const accessToken = localStorage.getItem("accessToken");
-      const refreshToken = localStorage.getItem("refreshToken");
-
-    if (!accessToken) {
-      setUser(null);
-          // if unauthenticated and not on allowed pages, redirect back to hotel menu or home
-          const allowedPaths = [
-            '/',
-            hotelId ? `/hotel/${hotelId}` : null,
-            hotelId ? `/hotel/${hotelId}/menu` : null,
-          ].filter(Boolean) as string[];
-          if (!allowedPaths.includes(path)) {
-            if (hotelId) router.replace(`/hotel/${hotelId}`);
-            else router.replace('/');
-          }
-          return;
-      }
-
+    // expose header height as CSS variable so layout can avoid overlap if needed
+    function updateHeaderHeight() {
       try {
-        const ok = await authCheck(accessToken);
-        if (ok) {
-          const username = localStorage.getItem("username");
-          setUser(username ? { name: username } : null);
-          return;
-        }
-
-        // access token invalid, try refresh
-        if (!refreshToken) {
-          localStorage.removeItem("accessToken");
-          localStorage.removeItem("refreshToken");
-          setUser(null);
-          return;
-        }
- 
-        const refreshed = await authRefresh(refreshToken);
-        if (!refreshed || !refreshed.access_token) {
-          // refresh failed (401 or other) -> clear tokens and redirect if needed
-          localStorage.removeItem("accessToken");
-          localStorage.removeItem("refreshToken");
-          setUser(null);
-          toast.error('Session expired — please sign in');
-          const allowedPaths = [
-            '/',
-            hotelId ? `/hotel/${hotelId}` : null,
-            hotelId ? `/hotel/${hotelId}/menu` : null,
-          ].filter(Boolean) as string[];
-          if (!allowedPaths.includes(path)) {
-            if (hotelId) router.replace(`/hotel/${hotelId}`);
-            else router.replace('/');
-          }
-          return;
-        }
-
-        // update access token and set user
-        localStorage.setItem("accessToken", refreshed.access_token);
-        toast.success('Session refreshed');
-        const username = localStorage.getItem("username");
-        setUser(username ? { name: username } : null);
+        const el = headerRef?.current || document.querySelector('header');
+        if (!el) return;
+        const h = (el as HTMLElement).offsetHeight;
+        document.documentElement.style.setProperty('--header-height', `${h}px`);
       } catch (e) {
-        console.error('Auth check error', e);
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("refreshToken");
-        setUser(null);
-        toast.error('Auth validation failed — please sign in');
+        // ignore
       }
-      finally {
-        setIsCheckingAuth(false);
+    }
+
+    updateHeaderHeight();
+    window.addEventListener('resize', updateHeaderHeight);
+
+    // keep cart count in header (from localStorage or server when available)
+    function updateCartCountFromLocal() {
+      try {
+        if (typeof window === 'undefined') return;
+        const raw = localStorage.getItem('cart') || '{}';
+        const parsed = JSON.parse(raw || '{}');
+        if (parsed && typeof parsed === 'object') {
+          const sum = Object.values(parsed).reduce((s: number, v: any) => s + (Number(v) || 0), 0);
+          setCartCount(sum);
+          return;
+        }
+      } catch (e) {
+        // ignore
       }
-    })();
+      setCartCount(0);
+    }
+
+    updateCartCountFromLocal();
+    if (typeof window !== 'undefined') window.addEventListener('storage', updateCartCountFromLocal);
+
+    // cleanup listener
+    return () => {
+      if (typeof window !== 'undefined') {
+        window.removeEventListener('storage', updateCartCountFromLocal);
+        window.removeEventListener('resize', updateHeaderHeight);
+      }
+    };
   }, []);
 
-  function toggleTheme() {
-    const next = theme === "light" ? "dark" : "light";
-    setTheme(next);
-    localStorage.setItem("theme", next);
-    document.documentElement.classList.remove("theme-light", "theme-dark");
-    document.documentElement.classList.add(next === "dark" ? "theme-dark" : "theme-light");
-  }
-
-  const navLinks = hotelId
-    ? [
-        { href: `/hotel/${hotelId}`, label: "Menu", icon: <Utensils size={18} /> },
-        { href: `/hotel/${hotelId}/orders`, label: "Orders", icon: <Coffee size={18} /> },
-        { href: `/hotel/${hotelId}/cart`, label: "Basket", icon: <ShoppingCart size={18} /> },
-      ]
-    : [];
+  const navLinks = [
+    { href: "/orders", label: "Orders", icon: <Coffee size={18} /> },
+    { href: "/cart", label: "Basket", icon: <ShoppingCart size={18} />, count: cartCount },
+  ];
 
   return (
     <motion.header
-      initial={{ y: -50, opacity: 0 }}
+      initial={{ y: -80, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.6, ease: "easeOut" }}
-      className={`fixed top-0 left-0 right-0 z-50 shadow-md border-b`} 
+      transition={{ duration: 0.8, ease: "easeOut" }}
+      className={`fixed top-0 left-0 z-50 shadow-md border-b w-full`} 
       style={{ background: 'var(--header-bg)', backdropFilter: 'saturate(180%) blur(6px)' }}
     >
-      <div className="container mx-auto flex items-center justify-between px-4 sm:px-6 lg:px-8 py-4">
+        <div className="container mx-auto flex items-center justify-between px-4 sm:px-6 lg:px-8 py-4">
         {/* ===== Logo Area ===== */}
         <Link href="/" className="flex items-center gap-3 group">
           <motion.div
             whileHover={{ rotate: 12, scale: 1.04 }}
             transition={{ type: "spring", stiffness: 300 }}
-            className={`p-1 rounded-full shadow-md flex items-center justify-center overflow-hidden
-              ${theme === "dark" 
-                ? "bg-gradient-to-tr from-amber-400/30 to-pink-500/40"
-                : "bg-gradient-to-tr from-amber-100 to-pink-100"}
-            `}
+            className={`p-1 rounded-full shadow-md flex items-center justify-center overflow-hidden bg-gradient-to-tr from-blue-100 to-sky-100`}
           >
-            {/* use public/eCom.jpeg as logo */}
             <img src="/eCom.jpeg" alt="eCom logo" className="w-9 h-9 object-cover rounded-full" />
           </motion.div>
           <div>
-            <div className={`text-lg font-bold ${theme === "dark" ? "text-white" : "text-slate-900"}`}>
-              {hotelData?.name ?? 'Your Hotels'}
+            <div className={`text-lg font-bold text-slate-900`}>
+              Food Order
             </div>
-            <div className={`text-sm ${theme === "dark" ? "text-slate-300" : "text-muted"}`}>
-              Dining & Room Service
+            <div className={`text-sm text-muted`}>
+              Fresh & Delicious
             </div>
           </div>
         </Link>
-
-        {/* ===== Nav/Auth Links ===== */}
-        <nav className="hidden sm:flex items-center gap-3">
-          {isHydrated && isCheckingAuth ? (
-            // simple placeholder while checking auth
-            <div className="h-9 w-40 bg-gray-100 animate-pulse rounded-xl" />
-          ) : isHydrated && !user ? (
-            <>
-              <Link href="/signin" className="ml-4 px-4 py-2 rounded-xl font-medium text-sm bg-blue-50 text-blue-700 hover:bg-blue-100 transition">Sign In</Link>
-              <Link href="/signup" className="ml-2 px-4 py-2 rounded-xl font-medium text-sm bg-rose-50 text-rose-700 hover:bg-rose-100 transition">Sign Up</Link>
-            </>
-          ) : (
-            <>
-              {navLinks.map((link) => {
-                const isActive = path.startsWith(link.href);
-                return (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-xl font-medium text-sm transition-all duration-300 ${
-                      isActive
-                        ? theme === "dark"
-                          ? "bg-slate-700/70 text-amber-300 shadow-inner"
-                          : "bg-gradient-to-r from-amber-100 to-rose-100 text-rose-600 shadow-md"
-                        : theme === "dark"
-                          ? "text-slate-200 hover:text-amber-300 hover:bg-slate-800/50"
-                          : "hover:bg-amber-50 hover:text-amber-600 text-slate-700"
-                    }`}
-                  >
-                    {link.icon}
-                    {link.label}
+        {/* Right area: small indicators only (counts) */}
+        <div className="hidden lg:flex items-center gap-3">
+          {isHydrated && (
+            <div className="flex items-center gap-2">
+              <Link href="/orders" className="px-3 py-2 rounded-md hover:bg-gray-100">Orders</Link>
+              <Link href="/cart" className="relative px-3 py-2 rounded-md hover:bg-gray-100">
+                    Basket
+                    {cartCount > 0 && <span className="absolute -top-1 -right-1 inline-flex items-center justify-center text-white text-xs px-2 py-0.5 rounded-full" style={{ background: 'var(--brand-blue)' }}>{cartCount}</span>}
                   </Link>
-                );
-              })}
-              <span className="ml-4 px-4 py-2 rounded-xl font-medium text-sm bg-emerald-50 text-emerald-700">{user?.name ?? 'User'}</span>
-              <button
-                className="ml-2 px-4 py-2 rounded-xl font-medium text-sm bg-gray-100 text-gray-700 hover:bg-gray-200 transition"
-                onClick={() => {
-                      // clear all individual fields on sign out
-                      localStorage.removeItem('userId');
-                      localStorage.removeItem('username');
-                      localStorage.removeItem('role');
-                      localStorage.removeItem('hotelId');
-                      localStorage.removeItem("accessToken");
-                      localStorage.removeItem("refreshToken");
-                      setUser(null);
-                      // redirect to home or hotel menu
-                      if (hotelId) router.replace(`/`);
-                      else router.replace('/');
-                }}
-              >Sign Out</button>
-            </>
+                </div>
           )}
-        </nav>
+        </div>
+      </div>
+      {/* Top marquee */}
+      <div className="w-full overflow-hidden border-t border-transparent">
+        <div className="py-2">
+          <div className="animate-marquee text-sm text-brand-blue">Order fresh meals • Fast delivery • Secure checkout • Best prices • Order now and enjoy!</div>
+        </div>
+      </div>
+
+      {/* Secondary marquee */}
+      <div className="w-full overflow-hidden">
+        <div className="animate-marquee whitespace-nowrap text-center py-2 text-sm text-brand-blue">
+          Welcome to Food Order — Fresh & Delicious — Order now for fast delivery —&nbsp;
+        </div>
       </div>
 
       {/* ===== Animated Gradient Line (bottom shimmer) ===== */}
       <motion.div
-        className="h-[3px] w-full bg-gradient-to-r from-amber-400 via-pink-500 to-sky-400"
+        className="h-[3px] w-full"
         animate={{ backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"] }}
         transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
-        style={{ backgroundSize: "200% 200%" }}
+        style={{ background: `linear-gradient(90deg, var(--brand-1), var(--brand-2))`, backgroundSize: "200% 200%" }}
       />
     </motion.header>
   );

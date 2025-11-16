@@ -29,13 +29,13 @@ export default function OrdersPage() {
           transition={{ duration: 0.5 }}
           className="text-center mb-10"
         >
-          <div className="flex justify-center mb-4">
+            <div className="flex justify-center mb-4">
             <motion.div
               animate={{ rotate: [0, 10, -10, 0] }}
               transition={{ duration: 3, repeat: Infinity }}
-              className="p-4 bg-gradient-to-tr from-amber-100 to-pink-100 rounded-full shadow-lg"
+              className="p-4 bg-gradient-to-tr from-blue-100 to-sky-100 rounded-full shadow-lg"
             >
-              <Receipt className="text-rose-600 w-8 h-8" />
+              <Receipt className="text-blue-600 w-8 h-8" />
             </motion.div>
           </div>
           <h1 className="text-4xl font-extrabold mb-2" style={{ color: 'var(--fg)' }}>
@@ -48,15 +48,15 @@ export default function OrdersPage() {
 
         {/* === Orders List === */}
         {orders.length === 0 ? (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="text-center text-slate-500 dark:text-slate-400 py-20"
-          >
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="text-center text-slate-500 py-20"
+            >
             <ShoppingBag size={60} className="mx-auto mb-4 opacity-70" />
             <p className="text-lg">You haven’t placed any orders yet.</p>
-            <p className="text-sm text-slate-400">
-              Head to the <span className="font-semibold text-rose-500">Menu</span> and treat yourself.
+              <p className="text-sm text-slate-400">
+              Head to the <span className="font-semibold text-blue-600">Menu</span> and treat yourself.
             </p>
           </motion.div>
         ) : (
@@ -76,8 +76,8 @@ export default function OrdersPage() {
                   <div className="p-4 md:p-6">
                     <div className="flex items-start justify-between gap-4">
                       <div className="flex items-center gap-4">
-                        <div className="p-2 rounded-full bg-amber-50">
-                          <Receipt className="text-rose-600" />
+                        <div className="p-2 rounded-full bg-blue-50">
+                          <Receipt className="text-blue-600" />
                         </div>
                         <div>
                           <div className="font-semibold text-gray-800">Order #{o.id}</div>
@@ -93,7 +93,7 @@ export default function OrdersPage() {
                         <div className="mt-1 inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-50 text-gray-700">
                           {o.source || 'unknown'}
                         </div>
-                        <div className="mt-3 text-lg font-semibold text-rose-600">${total.toFixed(2)}</div>
+                            <div className="mt-3 text-lg font-semibold text-blue-600">${total.toFixed(2)}</div>
                       </div>
                     </div>
 

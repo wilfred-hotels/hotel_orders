@@ -11,6 +11,7 @@ export const API = {
   auth_register: `${BASE}/auth/register`,
   token_check:`${BASE}/auth/check`,
   token_refresh:`${BASE}/auth/refresh`,
+  guests: `${BASE}/guests`,
   cart: `${BASE}/cart`,
   items: `${BASE}/cart/items`,
   item: (itemId: number) => `${BASE}/cart/items/${itemId}`,

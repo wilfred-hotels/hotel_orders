@@ -3,6 +3,8 @@
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { ShoppingBag, Loader2 } from "lucide-react";
+import ProductModal from './ProductModal';
+import { useState } from 'react';
 
 export default function ProductCard({
   product,
@@ -13,18 +15,19 @@ export default function ProductCard({
   onAdd: (id: number) => void;
   isAdding?: boolean;
 }) {
+  const [open, setOpen] = useState(false);
   return (
     <motion.div
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
-      whileHover={{ scale: 1.03 }}
+      whileHover={{ scale: 1.01 }}
       transition={{ duration: 0.4, ease: "easeOut" }}
-      className="card-element overflow-hidden"
+      className="card-element overflow-hidden flex flex-col md:flex-row gap-4 bg-white rounded-xl shadow-md"
     >
       {/* ====== Product Image ====== */}
-      <div className="relative h-48 overflow-hidden group">
+      <div className="relative w-full md:w-72 h-48 overflow-hidden group cursor-pointer" onClick={() => setOpen(true)}>
         <Image
-          src={product.image || "/food-placeholder.jpg"}
+          src={product.image || "/eCom.jpeg"}
           alt={product.name}
           width={400}
           height={250}
@@ -44,7 +47,7 @@ export default function ProductCard({
       </div>
 
       {/* ====== Card Details ====== */}
-      <div className="p-5 flex flex-col justify-between gap-3">
+  <div className="flex-1 p-5 flex flex-col justify-between gap-3">
         <div className="flex items-center justify-between">
           <h3 className="font-semibold text-xl text-slate-800 tracking-tight">
             {product.name}
@@ -78,6 +81,7 @@ export default function ProductCard({
           </motion.button>
         </div>
       </div>
+      <ProductModal product={product} open={open} onClose={() => setOpen(false)} onAdd={onAdd} isAdding={isAdding} />
     </motion.div>
   );
 }

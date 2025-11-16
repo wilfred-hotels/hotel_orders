@@ -64,8 +64,8 @@ export default function CheckoutPage() {
 
   async function handleMpesa() {
     if (!cartId) return toast.error('No cart found');
-    if (!phone || !/^(\+?254|0)?7\d{8}$/.test(phone))
-      return toast.error('Enter a valid Safaricom phone number');
+    // if (!phone || !/^(\+?254|0)?7\d{8}$/.test(phone))
+    //   return toast.error('Enter a valid Safaricom phone number');
 
     const userId = getUserId();
     const token = getToken();
@@ -108,7 +108,7 @@ export default function CheckoutPage() {
         </div>
         <div className="text-right">
           <div className="text-lg font-semibold text-gray-600">Total</div>
-          <div className="text-2xl font-bold text-rose-600">KES {total.toFixed(2)}</div>
+          <div className="text-2xl font-bold text-blue-600">KES {total.toFixed(2)}</div>
         </div>
       </div>
 

@@ -2,15 +2,34 @@
 
 import ProductCard from "../components/ProductCard";
 import { useState, useEffect } from "react";
-import { getProducts } from "../../actions/actions";
+import { getProducts, createGuest } from "../../actions/actions";
 import { toast } from "react-hot-toast";
 
 export default function ProductsPage() {
   const [products, setProducts] = useState<any[]>([]);
 
   useEffect(() => {
-    getProducts().then(setProducts).catch(console.error);
-    console.log('ProductsPage loaded' ,products)
+    // Ensure we have a guestId for anonymous cart ownership
+    (async () => {
+      try {
+        const existing = localStorage.getItem('guestId');
+        if (!existing) {
+          const guestId = await createGuest();
+          localStorage.setItem('guestId', guestId);
+          console.log('Created guestId', guestId);
+        }
+      } catch (e) {
+        console.error('Could not create guest id', e);
+      }
+    })();
+
+    getProducts()
+      .then((prods) => {
+        setProducts(prods);
+        try { localStorage.setItem('products', JSON.stringify(prods)); } catch (e) { /* ignore */ }
+      })
+      .catch(console.error);
+    console.log('ProductsPage loaded', products)
   }, []);
 
   function addToCart(id: number) {
@@ -32,12 +51,13 @@ export default function ProductsPage() {
 
   return (
     <div>
-  <h1 className="text-3xl font-bold mb-4">Menu — Food & Refreshments</h1>
-  <p className="text-muted mb-6">Order from our selection of beverages, snacks and meals. We offer in-room delivery or pickup.</p>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {products.map((p) => (
-          <ProductCard key={p.id} product={p} onAdd={addToCart} />
-        ))}
+      <h1 className="text-3xl font-bold mb-4">Menu — Food & Refreshments</h1>
+      <p className="text-muted mb-6">Order from our selection of beverages, snacks and meals. We offer in-room delivery or pickup.</p>
+
+      <div className="space-y-6">
+          {products.map((p) => (
+            <ProductCard key={p.id} product={p} onAdd={addToCart} />
+          ))}
       </div>
     </div>
   );

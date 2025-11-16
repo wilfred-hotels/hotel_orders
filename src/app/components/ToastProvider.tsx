@@ -55,7 +55,7 @@ export default function ToastProvider({ children }: { children: React.ReactNode 
             key={t.id}
             role="status"
             className={`shadow-lg rounded-lg pointer-events-auto ring-1 ring-black/5 overflow-hidden transform transition-all duration-200 ease-out 
-              ${t.type === "success" ? "bg-emerald-50 border border-emerald-100" : t.type === "error" ? "bg-rose-50 border border-rose-100" : "bg-sky-50 border border-sky-100"}`}
+              ${t.type === "success" ? "bg-emerald-50 border border-emerald-100" : t.type === "error" ? "bg-red-50 border border-red-100" : "bg-sky-50 border border-sky-100"}`}
           >
             <div className="flex items-start gap-3 p-3">
               <div className="flex-1">
