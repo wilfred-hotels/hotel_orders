@@ -11,53 +11,48 @@ export default function OffersSection() {
   const plugin = useRef(Autoplay({ delay: 5000, stopOnInteraction: false }));
 
   return (
-    <section className="py-8">
+    <section className="py-6 sm:py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6">
+        <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 sm:mb-6">
           Special Offers
         </h2>
 
-        <Carousel
-          plugins={[plugin.current]}
-          onMouseEnter={plugin.current.stop}
-          onMouseLeave={plugin.current.reset}
-          opts={{
-            loop: true,
-            align: "start",
-            slidesToScroll: 1,
-            containScroll: "trimSnaps",
-          }}
-        >
-          <CarouselContent className="flex gap-6">
-            {promotions.map((promo, index) => (
-              <CarouselItem
-                key={promo.id}
-                className="
-                  flex-shrink-0
-                  w-full
-                  sm:w-1/2
-                  md:w-1/3
-                  lg:w-1/4
-                  xl:w-1/5
-                  min-w-0
-                "
-              >
-                <ProductCard
-                  id={promo.id}
-                  title={promo.title}
-                  description={promo.description}
-                  image={promo.image}
-                  discount={promo.discount}
-                  onButtonClick={() => console.log("Claim today!")}
-                  imagePriority={index < 3}
-                />
-              </CarouselItem>
-            ))}
-          </CarouselContent>
-        </Carousel>
+        <div className="relative max-w-screen-2xl mx-auto">
+          <Carousel
+            plugins={[plugin.current]}
+            onMouseEnter={plugin.current.stop}
+            onMouseLeave={plugin.current.reset}
+            opts={{
+              loop: true,
+              align: "start",
+              slidesToScroll: 1,
+              containScroll: "trimSnaps",
+            }}
+            className="w-full"
+          >
+            <CarouselContent className="-ml-2 sm:-ml-3">
+              {promotions.map((promo, index) => (
+                <CarouselItem
+                  key={promo.id}
+                  className="pl-2 sm:pl-3 basis-full sm:basis-1/2 lg:basis-1/3"
+                >
+                  <ProductCard
+                    id={promo.id}
+                    title={promo.title}
+                    description={promo.description}
+                    image={promo.image}
+                    discount={promo.discount}
+                    onButtonClick={() => console.log("Claim today!")}
+                    imagePriority={index < 3}
+                  />
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+          </Carousel>
+        </div>
 
         {/* Dots Indicator for Mobile */}
-        <div className="flex md:hidden justify-center gap-2 mt-8">
+        <div className="flex md:hidden justify-center gap-2 mt-6 sm:mt-8">
           {promotions.map((_, index) => (
             <button
               key={index}

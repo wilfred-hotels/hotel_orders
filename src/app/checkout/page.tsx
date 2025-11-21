@@ -19,23 +19,23 @@ export default function CheckoutPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 py-8">
-        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-8">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+        <h1 className="text-xl sm:text-2xl font-bold text-gray-900 mb-6">
           Checkout
         </h1>
 
-        <div className="flex flex-col lg:flex-row gap-8">
+        <div className="flex flex-col lg:flex-row gap-6 sm:gap-8">
           {/* Delivery + Payment */}
-          <div className="flex-1 space-y-6">
-            <Card className="p-4 sm:p-6">
-              <h2 className="text-lg sm:text-xl font-semibold mb-4">
+          <div className="flex-1 space-y-4 sm:space-y-6">
+            <Card className="p-3 sm:p-4">
+              <h2 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">
                 Delivery Information
               </h2>
               <DeliveryForm />
             </Card>
 
-            <Card className="p-4 sm:p-6">
-              <h2 className="text-lg sm:text-xl font-semibold mb-4">
+            <Card className="p-3 sm:p-4">
+              <h2 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">
                 Payment Method
               </h2>
               <PaymentForm />

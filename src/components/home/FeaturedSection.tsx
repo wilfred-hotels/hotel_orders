@@ -1,8 +1,7 @@
 import React from "react";
 import { ProductCard } from "../ProductCard";
-import { featuredItems } from "@/constants/featuredItems";
 import { filterByCategory } from "../../../utils/filterItems";
-
+import { featuredItems } from "../../../utils/shuffleArray";
 
 interface FeaturedSectionProps {
   selectedCategory: string;
@@ -21,7 +20,7 @@ export default function FeaturedSection({
           Featured Dishes
         </h2>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {filteredItems.slice(0, 8).map((item, index) => (
             <ProductCard
               key={item.id}

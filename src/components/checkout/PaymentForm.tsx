@@ -43,7 +43,7 @@ export function PaymentForm() {
           name="method"
           render={({ field }) => (
             <FormItem className="w-full">
-              <FormLabel className="text-sm sm:text-base font-medium mb-2">
+              <FormLabel className="text-sm font-medium mb-2">
                 Payment Method
               </FormLabel>
               <FormControl>
@@ -52,25 +52,25 @@ export function PaymentForm() {
                   onValueChange={field.onChange}
                   className="flex flex-col space-y-2"
                 >
-                  <label className="flex items-center space-x-2 cursor-pointer text-sm sm:text-base">
+                  <label className="flex items-center space-x-2 cursor-pointer text-sm">
                     <RadioGroupItem value="credit" />
-                    <CreditCard className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600" />
+                    <CreditCard className="w-4 h-4 text-gray-600" />
                     <span>Credit/Debit Card</span>
                   </label>
 
-                  <label className="flex items-center space-x-2 cursor-pointer text-sm sm:text-base">
+                  <label className="flex items-center space-x-2 cursor-pointer text-sm">
                     <RadioGroupItem value="mobileMoney" />
-                    <DollarSign className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600" />
+                    <DollarSign className="w-4 h-4 text-gray-600" />
                     <span>Mobile Money</span>
                   </label>
 
-                  <label className="flex items-center space-x-2 cursor-pointer text-sm sm:text-base">
+                  <label className="flex items-center space-x-2 cursor-pointer text-sm">
                     <RadioGroupItem value="cod" />
                     <span>Cash on Delivery</span>
                   </label>
                 </RadioGroup>
               </FormControl>
-              <FormMessage className="text-xs sm:text-sm mt-1" />
+              <FormMessage className="text-xs mt-1" />
             </FormItem>
           )}
         />
@@ -82,17 +82,15 @@ export function PaymentForm() {
             name="cardNumber"
             render={({ field }) => (
               <FormItem className="w-full">
-                <FormLabel className="text-sm sm:text-base">
-                  Card Number
-                </FormLabel>
+                <FormLabel className="text-sm">Card Number</FormLabel>
                 <FormControl>
                   <Input
                     placeholder="1234 5678 9012 3456"
                     {...field}
-                    className="w-full sm:text-base"
+                    className="w-full text-sm"
                   />
                 </FormControl>
-                <FormMessage className="text-xs sm:text-sm" />
+                <FormMessage className="text-xs" />
               </FormItem>
             )}
           />
@@ -104,18 +102,16 @@ export function PaymentForm() {
             name="mobileAmount"
             render={({ field }) => (
               <FormItem className="w-full">
-                <FormLabel className="text-sm sm:text-base">
-                  Amount to Pay
-                </FormLabel>
+                <FormLabel className="text-sm">Amount to Pay</FormLabel>
                 <FormControl>
                   <Input
                     placeholder="Enter amount"
                     type="number"
                     {...field}
-                    className="w-full sm:text-base"
+                    className="w-full text-sm"
                   />
                 </FormControl>
-                <FormMessage className="text-xs sm:text-sm" />
+                <FormMessage className="text-xs" />
               </FormItem>
             )}
           />
@@ -123,7 +119,7 @@ export function PaymentForm() {
 
         <Button
           type="submit"
-          className="w-full bg-orange-600 hover:bg-orange-700 text-white py-2 sm:py-3 rounded-lg text-sm sm:text-base transition"
+          className="w-full bg-orange-600 hover:bg-orange-700 text-white py-2 rounded-lg text-sm transition"
         >
           Continue
         </Button>

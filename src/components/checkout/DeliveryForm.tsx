@@ -44,15 +44,15 @@ export function DeliveryForm() {
           name="fullName"
           render={({ field }) => (
             <FormItem className="w-full">
-              <FormLabel className="text-sm sm:text-base">Full Name</FormLabel>
+              <FormLabel className="text-sm">Full Name</FormLabel>
               <FormControl>
                 <Input
                   placeholder="John Doe"
                   {...field}
-                  className="w-full sm:text-base"
+                  className="w-full text-sm"
                 />
               </FormControl>
-              <FormMessage className="text-xs sm:text-sm" />
+              <FormMessage className="text-xs" />
             </FormItem>
           )}
         />
@@ -62,17 +62,15 @@ export function DeliveryForm() {
           name="address"
           render={({ field }) => (
             <FormItem className="w-full">
-              <FormLabel className="text-sm sm:text-base">
-                Delivery Address
-              </FormLabel>
+              <FormLabel className="text-sm">Delivery Address</FormLabel>
               <FormControl>
                 <Input
                   placeholder="123 Main St, City, State"
                   {...field}
-                  className="w-full sm:text-base"
+                  className="w-full text-sm"
                 />
               </FormControl>
-              <FormMessage className="text-xs sm:text-sm" />
+              <FormMessage className="text-xs" />
             </FormItem>
           )}
         />
@@ -82,17 +80,15 @@ export function DeliveryForm() {
           name="phone"
           render={({ field }) => (
             <FormItem className="w-full">
-              <FormLabel className="text-sm sm:text-base">
-                Phone Number
-              </FormLabel>
+              <FormLabel className="text-sm">Phone Number</FormLabel>
               <FormControl>
                 <Input
                   placeholder="(555) 123-4567"
                   {...field}
-                  className="w-full sm:text-base"
+                  className="w-full text-sm"
                 />
               </FormControl>
-              <FormMessage className="text-xs sm:text-sm" />
+              <FormMessage className="text-xs" />
             </FormItem>
           )}
         />
@@ -102,25 +98,23 @@ export function DeliveryForm() {
           name="instructions"
           render={({ field }) => (
             <FormItem className="w-full">
-              <FormLabel className="text-sm sm:text-base">
-                Special Instructions
-              </FormLabel>
+              <FormLabel className="text-sm">Special Instructions</FormLabel>
               <FormControl>
                 <Textarea
                   placeholder="Any special delivery instructions..."
                   rows={3}
                   {...field}
-                  className="w-full sm:text-base"
+                  className="w-full text-sm"
                 />
               </FormControl>
-              <FormMessage className="text-xs sm:text-sm" />
+              <FormMessage className="text-xs" />
             </FormItem>
           )}
         />
 
         <Button
           type="submit"
-          className="w-full bg-orange-600 hover:bg-orange-700 py-2 sm:py-3 rounded-lg text-sm sm:text-base transition"
+          className="w-full bg-orange-600 hover:bg-orange-700 py-2 rounded-lg text-sm transition"
         >
           Submit
         </Button>

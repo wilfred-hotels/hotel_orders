@@ -23,24 +23,24 @@ export const CartItemCard: React.FC<CartItemCardProps> = ({
   updateQuantity,
 }) => {
   return (
-    <div className="bg-white p-4 sm:p-5 rounded-lg shadow-sm flex flex-col sm:flex-row items-center gap-4">
+    <div className="bg-white p-3 sm:p-4 rounded-lg shadow-sm flex flex-col sm:flex-row items-center gap-3">
       {/* Image */}
-      <div className="relative w-full sm:w-24 h-24 sm:h-24 flex-shrink-0">
+      <div className="relative w-full sm:w-20 h-20 sm:h-20 shrink-0">
         <Image
           src={item.image}
           alt={item.name}
           fill
           className="object-cover rounded-md"
-          sizes="96px"
+          sizes="(max-width: 640px) 80px, 96px"
         />
       </div>
 
       {/* Name & Price */}
-      <div className="flex-1 w-full sm:flex-col">
-        <h3 className="text-base sm:text-lg font-semibold text-gray-900">
+      <div className="flex-1 w-full">
+        <h3 className="text-sm sm:text-base font-semibold text-gray-900 mb-1">
           {item.name}
         </h3>
-        <p className="text-orange-600 font-semibold">
+        <p className="text-orange-600 font-semibold text-sm sm:text-base">
           ${item.price.toFixed(2)}
         </p>
       </div>
@@ -50,21 +50,23 @@ export const CartItemCard: React.FC<CartItemCardProps> = ({
         <Button
           variant="outline"
           size="sm"
-          className="w-8 h-8 flex items-center justify-center p-0"
+          className="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center p-0"
           onClick={() => updateQuantity(item.id, item.quantity - 1)}
         >
-          <Minus className="w-4 h-4" />
+          <Minus className="w-3 h-3 sm:w-4 sm:h-4" />
         </Button>
 
-        <span className="w-8 text-center">{item.quantity}</span>
+        <span className="w-8 text-center text-sm sm:text-base">
+          {item.quantity}
+        </span>
 
         <Button
           variant="outline"
           size="sm"
-          className="w-8 h-8 flex items-center justify-center p-0"
+          className="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center p-0"
           onClick={() => updateQuantity(item.id, item.quantity + 1)}
         >
-          <Plus className="w-4 h-4" />
+          <Plus className="w-3 h-3 sm:w-4 sm:h-4" />
         </Button>
 
         <Button
@@ -73,7 +75,7 @@ export const CartItemCard: React.FC<CartItemCardProps> = ({
           className="text-red-600 hover:text-red-800"
           onClick={() => updateQuantity(item.id, 0)}
         >
-          <X className="w-5 h-5" />
+          <X className="w-4 h-4 sm:w-5 sm:h-5" />
         </Button>
       </div>
     </div>

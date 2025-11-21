@@ -75,32 +75,26 @@ export function CartDrawer({
         )}
       </DrawerTrigger>
 
-      <DrawerContent
-        className="
-          bg-white w-full max-w-sm sm:max-w-md
-          h-full flex flex-col
-          md:max-w-md lg:max-w-lg
-        "
-      >
+      <DrawerContent className="bg-white w-full max-w-sm sm:max-w-md h-full flex flex-col">
         <DrawerHeader className="px-4 sm:px-6 py-4">
           <div className="flex justify-between items-center">
-            <DrawerTitle className="text-lg sm:text-xl font-bold">
-              Your Cart
-            </DrawerTitle>
+            <DrawerTitle className="text-lg font-bold">Your Cart</DrawerTitle>
             <DrawerClose asChild>
               <Button variant="ghost" size="icon">
-                <X className="w-6 h-6 text-gray-600" />
+                <X className="w-5 h-5 text-gray-600" />
               </Button>
             </DrawerClose>
           </div>
-          <DrawerDescription className="text-sm sm:text-base text-gray-500 mt-1">
+          <DrawerDescription className="text-sm text-gray-500 mt-1">
             Review your items and proceed to checkout.
           </DrawerDescription>
         </DrawerHeader>
 
         <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-2 space-y-4">
           {cart.length === 0 ? (
-            <p className="text-gray-500 text-center py-8">Your cart is empty</p>
+            <p className="text-gray-500 text-center py-8 text-sm">
+              Your cart is empty
+            </p>
           ) : (
             cart.map((item) => (
               <CartItemCard
@@ -114,12 +108,12 @@ export function CartDrawer({
 
         {cart.length > 0 && (
           <DrawerFooter className="flex flex-col w-full px-4 sm:px-6 py-3 space-y-3">
-            <div className="flex justify-between items-center w-full text-base sm:text-lg font-semibold">
+            <div className="flex justify-between items-center w-full text-base font-semibold">
               <span>Subtotal</span>
               <span>${subtotal.toFixed(2)}</span>
             </div>
             <Button
-              className="w-full bg-orange-600 text-white hover:bg-orange-700 font-semibold py-2 sm:py-3 rounded-lg transition"
+              className="w-full bg-orange-600 text-white hover:bg-orange-700 font-semibold py-2 rounded-lg transition text-sm"
               onClick={() => router.push("/checkout")}
             >
               Checkout

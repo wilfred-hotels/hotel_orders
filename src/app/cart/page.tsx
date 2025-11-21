@@ -55,28 +55,30 @@ export default function CartPage() {
   }));
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12">
-        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-8 flex items-center space-x-2">
-          <ShoppingCart className="w-6 h-6 text-orange-600" />
+    <div className="min-h-screen bg-gray-50 py-6 sm:py-8">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h1 className="text-xl sm:text-2xl font-bold text-gray-900 mb-6 flex items-center space-x-2">
+          <ShoppingCart className="w-5 h-5 sm:w-6 sm:h-6 text-orange-600" />
           <span>Your Cart</span>
         </h1>
 
         {cart.length === 0 ? (
-          <div className="text-center py-12">
-            <ShoppingCart className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-            <p className="text-lg text-gray-600">Your cart is empty</p>
+          <div className="text-center py-8 sm:py-12">
+            <ShoppingCart className="w-12 h-12 sm:w-16 sm:h-16 text-gray-400 mx-auto mb-4" />
+            <p className="text-base sm:text-lg text-gray-600">
+              Your cart is empty
+            </p>
             <Button
-              className="mt-4 bg-orange-600 hover:bg-orange-700 text-white py-2 sm:py-3 px-4 sm:px-6 rounded-lg"
+              className="mt-4 bg-orange-600 hover:bg-orange-700 text-white py-2 px-4 rounded-lg text-sm"
               onClick={() => alert("Go to menu")}
             >
               Browse Menu
             </Button>
           </div>
         ) : (
-          <div className="flex flex-col lg:flex-row gap-8">
+          <div className="flex flex-col lg:flex-row gap-6 sm:gap-8">
             {/* Cart Items */}
-            <div className="flex-1 space-y-4">
+            <div className="flex-1 space-y-3 sm:space-y-4">
               {cart.map((item) => (
                 <CartItemCard
                   key={item.id}

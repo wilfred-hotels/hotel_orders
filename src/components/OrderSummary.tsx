@@ -38,32 +38,30 @@ export const OrderSummary: React.FC<OrderSummaryProps> = ({
   const total = subtotal + deliveryFee + tax;
 
   return (
-    <Card className="w-full max-w-md mx-auto sm:max-w-full flex flex-col">
-      <CardHeader className="px-4 sm:px-6 py-3">
-        <CardTitle className="text-lg sm:text-xl font-semibold">
-          Order Summary
-        </CardTitle>
+    <Card className="w-full max-w-md mx-auto flex flex-col">
+      <CardHeader className="px-4 py-3">
+        <CardTitle className="text-lg font-semibold">Order Summary</CardTitle>
       </CardHeader>
 
-      <CardContent className="space-y-3 px-4 sm:px-6 py-2 overflow-x-hidden">
+      <CardContent className="space-y-3 px-4 py-2 overflow-x-auto">
         {items.map((item) => (
           <div
             key={item.id}
-            className="flex justify-between items-center text-sm sm:text-base"
+            className="flex justify-between items-start text-sm"
           >
-            <div className="flex flex-col sm:flex-row sm:items-center">
+            <div className="flex flex-col">
               <span className="font-medium">{item.name}</span>
-              <span className="text-gray-600 ml-0 sm:ml-2 mt-1 sm:mt-0">
+              <span className="text-gray-600 text-xs mt-1">
                 x{item.quantity}
               </span>
             </div>
-            <span className="whitespace-nowrap">
+            <span className="whitespace-nowrap text-sm">
               ${(item.price * item.quantity).toFixed(2)}
             </span>
           </div>
         ))}
 
-        <div className="border-t pt-4 space-y-2 text-sm sm:text-base">
+        <div className="border-t pt-4 space-y-2 text-sm">
           <div className="flex justify-between">
             <span>Subtotal</span>
             <span>${subtotal.toFixed(2)}</span>
@@ -76,16 +74,16 @@ export const OrderSummary: React.FC<OrderSummaryProps> = ({
             <span>Tax</span>
             <span>${tax.toFixed(2)}</span>
           </div>
-          <div className="flex justify-between font-semibold text-base sm:text-lg pt-2 border-t">
+          <div className="flex justify-between font-semibold text-base pt-2 border-t">
             <span>Total</span>
             <span>${total.toFixed(2)}</span>
           </div>
         </div>
       </CardContent>
 
-      <CardFooter className="px-4 sm:px-6 py-3">
+      <CardFooter className="px-4 py-3">
         <Button
-          className="w-full bg-orange-600 hover:bg-orange-700 text-white py-2 sm:py-3 rounded-lg transition"
+          className="w-full bg-orange-600 hover:bg-orange-700 text-white py-2 rounded-lg transition text-sm"
           onClick={() => {
             placeOrder?.();
             router.push("/checkout");

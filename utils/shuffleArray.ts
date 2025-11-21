@@ -1,4 +1,4 @@
-import { menuItems } from "@/constants/menu";
+import { combinedFeaturedAndMenuItems } from "@/constants/menu";
 
 // Utility to shuffle an array
 export function shuffleArray<T>(arr: T[]): T[] {
@@ -9,4 +9,7 @@ export function shuffleArray<T>(arr: T[]): T[] {
 }
 
 // Pick 6 featured items (mix of promos and regular)
-export const featuredItems = shuffleArray(menuItems).slice(0, 6);
+export const featuredItems = shuffleArray(combinedFeaturedAndMenuItems).slice(
+  0,
+  6
+);

@@ -81,7 +81,7 @@ export default function Header() {
               <Button
                 variant="ghost"
                 size="sm"
-                className="p-2 rounded-full text-orange-500 md:hover:bg-orange-600"
+                className="p-2 rounded-full text-orange-500 md:hover:text-orange-400 md:hover:bg-orange-300"
               >
                 <ShoppingCart className="w-5 h-5" />
               </Button>
