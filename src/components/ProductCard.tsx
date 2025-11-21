@@ -64,7 +64,7 @@ export function ProductCard({
       </div>
 
       {/* Content */}
-      <CardContent className="flex-1 p-3 sm:p-4 flex flex-col justify-between -mt-1">
+      <div className="flex-1 flex flex-col justify-between p-3 sm:p-4">
         <div>
           {/* Title & discount */}
           <div className="flex justify-between items-start mb-2">
@@ -109,17 +109,15 @@ export function ProductCard({
             </div>
           )}
         </div>
-      </CardContent>
 
-      {/* Footer button */}
-      <CardFooter className="p-3 sm:p-4 pt-0">
+        {/* Footer button - moved inside content div */}
         <Button
-          className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 sm:py-2.5 rounded-lg transition text-xs sm:text-sm"
+          className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 sm:py-2.5 rounded-lg transition text-xs sm:text-sm mt-3"
           onClick={onButtonClick}
         >
           {isPromo ? "Claim Today's Offer" : "Add to Cart"}
         </Button>
-      </CardFooter>
+      </div>
     </Card>
   );
 }

@@ -40,7 +40,7 @@ export default function MenuPage() {
           {/* Menu Items */}
           <main className="flex-1">
             {/* Search Bar */}
-            <div className="mb-6 self-center">
+            <div className="mb-6">
               <SearchBar
                 searchTerm={searchTerm}
                 setSearchTerm={setSearchTerm}

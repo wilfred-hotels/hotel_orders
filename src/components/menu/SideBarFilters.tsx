@@ -1,4 +1,4 @@
-import { categories } from "@/constants/categoies";
+import { categories } from "@/constants/categories";
 import React from "react";
 
 interface CategoryFilterProps {

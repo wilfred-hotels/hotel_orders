@@ -75,8 +75,8 @@ export function CartDrawer({
         )}
       </DrawerTrigger>
 
-      <DrawerContent className="bg-white w-full max-w-sm sm:max-w-md h-full flex flex-col">
-        <DrawerHeader className="px-4 sm:px-6 py-4">
+      <DrawerContent className="bg-white w-[90vw] max-w-md sm:w-[500px] h-full flex flex-col">
+        <DrawerHeader className="px-4 py-4">
           <div className="flex justify-between items-center">
             <DrawerTitle className="text-lg font-bold">Your Cart</DrawerTitle>
             <DrawerClose asChild>
@@ -90,7 +90,7 @@ export function CartDrawer({
           </DrawerDescription>
         </DrawerHeader>
 
-        <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-2 space-y-4">
+        <div className="flex-1 overflow-y-auto px-4 py-2 space-y-3">
           {cart.length === 0 ? (
             <p className="text-gray-500 text-center py-8 text-sm">
               Your cart is empty
@@ -101,13 +101,14 @@ export function CartDrawer({
                 key={item.id}
                 item={item}
                 updateQuantity={updateQuantity}
+                variant="drawer"
               />
             ))
           )}
         </div>
 
         {cart.length > 0 && (
-          <DrawerFooter className="flex flex-col w-full px-4 sm:px-6 py-3 space-y-3">
+          <DrawerFooter className="flex flex-col w-full px-4 py-3 space-y-3">
             <div className="flex justify-between items-center w-full text-base font-semibold">
               <span>Subtotal</span>
               <span>${subtotal.toFixed(2)}</span>

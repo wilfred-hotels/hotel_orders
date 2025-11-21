@@ -84,6 +84,7 @@ export default function CartPage() {
                   key={item.id}
                   item={item}
                   updateQuantity={updateQuantity}
+                  variant="cartPage"
                 />
               ))}
             </div>

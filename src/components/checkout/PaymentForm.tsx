@@ -108,7 +108,7 @@ export function PaymentForm() {
                     placeholder="Enter amount"
                     type="number"
                     {...field}
-                    className="w-full text-sm"
+                    className="w-full text-sm py-5"
                   />
                 </FormControl>
                 <FormMessage className="text-xs" />

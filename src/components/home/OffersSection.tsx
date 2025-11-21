@@ -8,7 +8,7 @@ import { promotions } from "@/constants/promos";
 
 export default function OffersSection() {
   const [currentSlide, setCurrentSlide] = useState(0);
-  const plugin = useRef(Autoplay({ delay: 5000, stopOnInteraction: false }));
+  const plugin = useRef(Autoplay({ delay: 3000, stopOnInteraction: false }));
 
   return (
     <section className="py-6 sm:py-8">
@@ -30,7 +30,7 @@ export default function OffersSection() {
             }}
             className="w-full"
           >
-            <CarouselContent className="-ml-2 sm:-ml-3">
+            <CarouselContent className="-ml-2 sm:-ml-3 py-3">
               {promotions.map((promo, index) => (
                 <CarouselItem
                   key={promo.id}

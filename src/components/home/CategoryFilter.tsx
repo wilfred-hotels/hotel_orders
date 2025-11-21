@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button"; // Adjust path if needed
-import { categories } from "@/constants/categoies";
+import { categories } from "@/constants/categories";
 
 interface CategoryFilterProps {
   selectedCategory: string;

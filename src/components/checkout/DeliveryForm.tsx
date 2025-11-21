@@ -49,7 +49,7 @@ export function DeliveryForm() {
                 <Input
                   placeholder="John Doe"
                   {...field}
-                  className="w-full text-sm"
+                  className="w-full text-sm py-5"
                 />
               </FormControl>
               <FormMessage className="text-xs" />
@@ -67,7 +67,7 @@ export function DeliveryForm() {
                 <Input
                   placeholder="123 Main St, City, State"
                   {...field}
-                  className="w-full text-sm"
+                  className="w-full text-sm py-5"
                 />
               </FormControl>
               <FormMessage className="text-xs" />
@@ -85,7 +85,7 @@ export function DeliveryForm() {
                 <Input
                   placeholder="(555) 123-4567"
                   {...field}
-                  className="w-full text-sm"
+                  className="w-full text-sm py-5"
                 />
               </FormControl>
               <FormMessage className="text-xs" />

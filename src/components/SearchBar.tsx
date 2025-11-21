@@ -24,7 +24,7 @@ export default function SearchBar({
         placeholder="Search for restaurants, cuisines, or dishes..."
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
-        className="w-full px-4 py-3 sm:py-4 border-0 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm sm:text-base"
+        className="w-full px-4 py-3 sm:py-4 md:py-10 border-0 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm sm:text-base"
       />
 
       {/* Left icon addon */}
