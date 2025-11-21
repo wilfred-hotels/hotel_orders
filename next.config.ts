@@ -1,9 +1,10 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  eslint: { ignoreDuringBuilds: true },
+  reactStrictMode: true, // recommended
   images: {
-    domains: ["images.unsplash.com", "source.unsplash.com"],
+    domains: ["images.unsplash.com", "source.unsplash.com", "placehold.co"],
+    formats: ["image/avif", "image/webp"],
   },
 };
 

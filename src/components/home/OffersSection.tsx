@@ -1,0 +1,77 @@
+"use client";
+
+import React, { useState, useRef } from "react";
+import { ProductCard } from "../ProductCard";
+import { Carousel, CarouselContent, CarouselItem } from "../ui/carousel";
+import Autoplay from "embla-carousel-autoplay";
+import { promotions } from "@/constants/promos";
+
+export default function OffersSection() {
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const plugin = useRef(Autoplay({ delay: 5000, stopOnInteraction: false }));
+
+  return (
+    <section className="py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6">
+          Special Offers
+        </h2>
+
+        <Carousel
+          plugins={[plugin.current]}
+          onMouseEnter={plugin.current.stop}
+          onMouseLeave={plugin.current.reset}
+          opts={{
+            loop: true,
+            align: "start",
+            slidesToScroll: 1,
+            containScroll: "trimSnaps",
+          }}
+        >
+          <CarouselContent className="flex gap-6">
+            {promotions.map((promo, index) => (
+              <CarouselItem
+                key={promo.id}
+                className="
+                  flex-shrink-0
+                  w-full
+                  sm:w-1/2
+                  md:w-1/3
+                  lg:w-1/4
+                  xl:w-1/5
+                  min-w-0
+                "
+              >
+                <ProductCard
+                  id={promo.id}
+                  title={promo.title}
+                  description={promo.description}
+                  image={promo.image}
+                  discount={promo.discount}
+                  onButtonClick={() => console.log("Claim today!")}
+                  imagePriority={index < 3}
+                />
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+        </Carousel>
+
+        {/* Dots Indicator for Mobile */}
+        <div className="flex md:hidden justify-center gap-2 mt-8">
+          {promotions.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => setCurrentSlide(index)}
+              className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                currentSlide === index
+                  ? "bg-blue-600 w-6"
+                  : "bg-gray-300 hover:bg-gray-400"
+              }`}
+              aria-label={`Go to promotion ${index + 1}`}
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}

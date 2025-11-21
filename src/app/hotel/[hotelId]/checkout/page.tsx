@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
-import { toast } from "react-hot-toast";
 import { getCart as getCartApi, createOrder, initiateMpesaPayment } from "../../../../actions/actions";
+import { toast } from "sonner";
 
 function getUserId() {
   if (typeof window === "undefined") return undefined;
