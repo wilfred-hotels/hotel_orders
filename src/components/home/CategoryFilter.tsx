@@ -14,16 +14,19 @@ export default function CategoryFilter({
   setSelectedCategory,
 }: CategoryFilterProps) {
   return (
-    <div className="flex overflow-x-auto space-x-4 pb-4">
+    <div
+      className="flex flex-row overflow-x-auto py-2.5 gap-1 scrollbar-none px-1.5 md:justify-center
+ "
+    >
       {categories.map((category) => (
         <Button
           key={category.id}
           size="sm"
           variant={selectedCategory === category.id ? "default" : "outline"}
-          className={`shrink-0 px-6 py-3 rounded-full text-sm sm:text-base font-medium ${
+          className={`shrink-0 px-8 py-5 rounded-full shadow-md hover:shadow-lg text-sm sm:text-base font-medium transition-all duration-300 hover:transform hover:-translate-y-1  ${
             selectedCategory === category.id
-              ? "bg-orange-600 text-white border-orange-600 hover:bg-orange-700"
-              : "bg-white text-gray-700 border-gray-300 hover:border-orange-400 hover:text-orange-600"
+              ? "bg-[#FF5722] text-white border-orange-600 hover:bg-orange-400"
+              : "bg-white text-gray-700 border border-gray-200 hover:shadow-[#FF5722]/20 hover:text-orange-600"
           }`}
           onClick={() => {
             setSelectedCategory(category.id);

@@ -1,73 +1,88 @@
 "use client";
 
 import { ProductCard } from "@/components/ProductCard";
-import SearchBar from "@/components/SearchBar";
-import React, { useState } from "react";
+import { useState } from "react";
 import { filterByCategory } from "../../../utils/filterItems";
 import { combinedFeaturedAndMenuItems } from "@/constants/menu";
-import SideBarFilters from "@/components/menu/SideBarFilters";
+import SortingDropdown from "@/components/menu/SortingDropdown";
+import { useCartStore } from "@/store/useCartStore";
+import { cartProduct } from "@/types/cart";
+import FiltersWrapper from "@/components/menu/FiltersWrapper";
+import MobileFiltersDrawer from "@/components/menu/MobileFiltersDrawer";
 
 export default function MenuPage() {
-  const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
+  const [selectedPrice, setSelectedPrice] = useState("all");
+  const [sortBy, setSortBy] = useState("popular");
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   const filteredMenu = filterByCategory(
     combinedFeaturedAndMenuItems,
     selectedCategory
   );
 
+  const cartItems = useCartStore((s) => s.items);
+  const addItem = useCartStore((s) => s.addItem);
+
+  const addToCart = (item: cartProduct) => {
+    const exists = cartItems.some((i) => i.id === item.id);
+    if (!exists) {
+      addItem({
+        id: item.id,
+        name: item.name,
+        price: item.price,
+        image: item.image,
+      });
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex flex-col lg:flex-row gap-8">
-          {/* Sidebar Filters - Horizontal on mobile, vertical on desktop */}
-          <aside className="lg:hidden mb-6">
-            <SideBarFilters
+          {/* Desktop Sidebar */}
+          <div className="hidden lg:block lg:w-1/4">
+            <FiltersWrapper
               selectedCategory={selectedCategory}
               setSelectedCategory={setSelectedCategory}
-              isMobileHorizontal={true}
+              selectedPrice={selectedPrice}
+              setSelectedPrice={setSelectedPrice}
             />
-          </aside>
+          </div>
 
-          <aside className="hidden lg:block w-full lg:w-1/4">
-            <SideBarFilters
-              selectedCategory={selectedCategory}
-              setSelectedCategory={setSelectedCategory}
-              isMobileHorizontal={false}
+          {/* Main Content */}
+          <main className="lg:w-3/4">
+            <SortingDropdown
+              sortBy={sortBy}
+              setSortBy={setSortBy}
+              onOpenFilters={() => setDrawerOpen(true)}
             />
-          </aside>
 
-          {/* Menu Items */}
-          <main className="flex-1">
-            {/* Search Bar */}
-            <div className="mb-6">
-              <SearchBar
-                searchTerm={searchTerm}
-                setSearchTerm={setSearchTerm}
-              />
-            </div>
-
-            {/* Responsive Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {/* Desktop sidebar */}
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
               {filteredMenu.map((item, index) => (
                 <ProductCard
                   key={item.id}
-                  id={item.id}
-                  name={item.name}
-                  description={item.description}
-                  image={item.image}
-                  isPromo={item.isPromo}
-                  discount={item.discount}
-                  price={item.price}
-                  rating={item.rating}
-                  onButtonClick={() => console.log("Add to cart")}
+                  item={item}
+                  isInCart={cartItems.some((i) => i.id === item.id)}
                   imagePriority={index < 4}
+                  onButtonClick={addToCart}
                 />
               ))}
             </div>
           </main>
         </div>
       </section>
+
+      {/* Mobile Drawer */}
+      <MobileFiltersDrawer
+        isOpen={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+        selectedCategory={selectedCategory}
+        setSelectedCategory={setSelectedCategory}
+        selectedPrice={selectedPrice}
+        setSelectedPrice={setSelectedPrice}
+      />
     </div>
   );
 }

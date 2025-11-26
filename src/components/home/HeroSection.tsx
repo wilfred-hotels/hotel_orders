@@ -5,7 +5,6 @@ import { Search } from "lucide-react";
 import SearchBar from "../SearchBar";
 
 export default function HeroSection() {
-  const [searchTerm, setSearchTerm] = useState("");
   return (
     <>
       {/* Hero Section */}
@@ -31,13 +30,6 @@ export default function HeroSection() {
         message1="✨ New arrivals have just dropped!"
         message2="💥 Limited-time deals—Shop the best picks now!"
       />
-
-      {/* Search & Filters */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex flex-col md:flex-row gap-4 items-center justify-center">
-          <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-        </div>
-      </section>
     </>
   );
 }

@@ -18,13 +18,13 @@ export default function SearchBar({
   onSearch,
 }: SearchBarProps) {
   return (
-    <InputGroup className="w-full max-w-full sm:max-w-lg">
+    <InputGroup className="w-full px-4 py-5 pr-4 text-gray-700 bg-gray-100 border border-gray-300 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF5722] focus-visible:border-transparent">
       {/* Input field */}
       <InputGroupInput
         placeholder="Search for restaurants, cuisines, or dishes..."
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
-        className="w-full px-4 py-3 sm:py-4 md:py-10 border-0 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm sm:text-base"
+        className="w-full text-sm sm:text-base"
       />
 
       {/* Left icon addon */}

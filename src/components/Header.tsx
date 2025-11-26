@@ -1,49 +1,51 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Menu, ShoppingCart } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import AdvertMarquee from "./AdvertMarquee";
 import { CartDrawer } from "./cart/CartDrawer";
+import SearchBar from "./SearchBar";
+import { useCartStore } from "@/store/useCartStore";
 
 const pages = [
   { key: "", label: "Home" },
   { key: "menu", label: "Menu" },
-  { key: "orders", label: "Orders", desktopOnly: true }, // desktop only
-  { key: "cart", label: "Basket", mobileOnly: true }, // mobile only
+  { key: "orders", label: "Orders", desktopOnly: true },
+  { key: "cart", label: "Basket", mobileOnly: true },
 ];
 
 export default function Header() {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
-  const NavLinkButton = ({
-    pageKey,
-    label,
-    className = "",
-  }: {
-    pageKey: string;
-    label: string;
-    className?: string;
-  }) => {
+  const cartItems = useCartStore((state) => state.items);
+  const totalItems = useCartStore((state) => state.totalItems());
+
+  useEffect(() => {
+    const handleScroll = () => setIsScrolled(window.scrollY > 10);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const NavLinkButton = ({ pageKey, label }: any) => {
     const active = pathname === `/${pageKey}`;
+
     return (
       <Button
         asChild
+        variant="ghost"
         size="sm"
-        variant={active ? "default" : "ghost"}
         className={`
-          px-3 py-2 rounded-md text-sm sm:text-base font-medium
-          transition-colors
-          ${className}
-          ${active ? "bg-orange-100 text-orange-500" : "text-orange-600"}
-          hover:bg-orange-200 hover:text-orange-400
-          md:hover:bg-orange-100 md:hover:text-orange-400
-          md:hover:cursor-pointer
-          pointer-events-auto
-          md:pointer-events-auto
+          px-3 py-2 rounded-md
+          text-sm md:text-base
+          font-medium
+          ${active ? "text-orange-500 bg-orange-100" : "text-gray-700"}
+          hover:bg-orange-200 hover:text-orange-600
         `}
       >
         <Link href={`/${pageKey}`} onClick={() => setMobileMenuOpen(false)}>
@@ -54,64 +56,79 @@ export default function Header() {
   };
 
   return (
-    <header className="bg-orange-50 shadow sticky top-0 z-50">
+    <nav
+      className={`sticky top-0 w-full z-50 transition-all duration-300 ${
+        isScrolled ? "bg-white shadow-md" : "bg-white/80 backdrop-blur"
+      }`}
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center h-16 justify-between">
-          {/* Logo */}
-          <h1 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-orange-600">
-            FoodHub
-          </h1>
-
-          {/* Desktop nav */}
-          <div className="hidden md:flex flex-1 justify-center space-x-6 lg:space-x-8">
-            {pages
-              .filter((p) => !p.mobileOnly)
-              .map((page) => (
-                <NavLinkButton
-                  key={page.key}
-                  pageKey={page.key}
-                  label={page.label}
-                />
-              ))}
-          </div>
-
-          {/* Shopping cart icon desktop */}
-          <div className="hidden md:flex items-center">
-            <CartDrawer triggerAsChild>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="p-2 rounded-full text-orange-500 md:hover:text-orange-400 md:hover:bg-orange-300"
+        <div className="flex flex-col md:flex-row py-3">
+          {/* Logo + search container */}
+          <div className="flex flex-col md:flex-row items-center justify-between w-full md:w-3/4 gap-3">
+            {/* Logo + mobile toggle */}
+            <div className="flex items-center justify-between w-full">
+              <Link
+                href="/"
+                className="
+                  text-xl sm:text-2xl md:text-3xl
+                  font-bold text-gray-900
+                "
               >
-                <ShoppingCart className="w-5 h-5" />
-              </Button>
-            </CartDrawer>
+                <span className="text-[#FF5722]">Food</span>Express
+              </Link>
+
+              <button
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="md:hidden p-2 text-orange-600"
+              >
+                <Menu className="w-6 h-6" />
+              </button>
+            </div>
+
+            {/* Search */}
+            <div className="w-full">
+              <SearchBar
+                searchTerm={searchTerm}
+                setSearchTerm={setSearchTerm}
+              />
+            </div>
           </div>
 
-          {/* Mobile menu button */}
-          <div className="md:hidden flex items-center">
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 text-orange-600"
-              aria-label="Toggle menu"
-            >
-              <Menu className="w-6 h-6" />
-            </button>
+          {/* Desktop nav + cart */}
+          <div className="hidden md:flex items-center justify-end w-1/4 space-x-4">
+            <div className="flex space-x-4">
+              {pages
+                .filter((p) => !p.mobileOnly)
+                .map((p) => (
+                  <NavLinkButton key={p.key} pageKey={p.key} label={p.label} />
+                ))}
+            </div>
+
+            {/* Cart */}
+            <CartDrawer triggerAsChild>
+              <div className="relative">
+                <ShoppingCart
+                  className="text-gray-600 hover:text-[#f0531f] transition-colors"
+                  size={24}
+                />
+                {cartItems.length > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs rounded-full px-1.5">
+                    {totalItems}
+                  </span>
+                )}
+              </div>
+            </CartDrawer>
           </div>
         </div>
 
-        {/* Mobile navigation */}
+        {/* Mobile menu */}
         {mobileMenuOpen && (
           <div className="md:hidden py-4 border-t border-orange-200">
             <div className="flex flex-col space-y-2">
               {pages
                 .filter((p) => !p.desktopOnly)
-                .map((page) => (
-                  <NavLinkButton
-                    key={page.key}
-                    pageKey={page.key}
-                    label={page.label}
-                  />
+                .map((p) => (
+                  <NavLinkButton key={p.key} pageKey={p.key} label={p.label} />
                 ))}
             </div>
           </div>
@@ -124,8 +141,7 @@ export default function Header() {
         message2="🚚 Free shipping on orders over $50"
       />
 
-      {/* Gradient shimmer */}
-      <div className="h-[3px] w-full bg-linear-to-r from-orange-300 via-orange-500 to-orange-600 animate-gradient-x bg-200" />
-    </header>
+      <div className="h-[3px] w-full bg-linear-to-r from-orange-300 via-orange-500 to-orange-600 animate-gradient-x" />
+    </nav>
   );
 }
