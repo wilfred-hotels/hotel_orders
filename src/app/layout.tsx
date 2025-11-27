@@ -17,16 +17,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="theme-light">
-      <body className="antialiased">
+      <body className="antialiased min-h-screen flex flex-col">
         <Toaster richColors position="top-right" />
 
-        {/* Header */}
         <Header />
 
-        {/* Main content */}
-        <main className=" bg-gray-50">{children}</main>
+        <main className="flex-1 bg-gray-50">{children}</main>
 
-        {/* Footer */}
         <Footer />
       </body>
     </html>

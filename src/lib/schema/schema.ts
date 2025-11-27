@@ -7,10 +7,8 @@ export const deliveryFormSchema = z.object({
     .string()
     .regex(/^\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}$/, "Invalid phone number"),
   instructions: z.string().optional(),
-});
 
-export const paymentSchema = z.object({
-  method: z.enum(["credit", "mobileMoney", "cod"]),
+  method: z.enum(["mpesa", "airtel", "card", "cod"]),
   cardNumber: z.string().optional(),
   mobileAmount: z.string().optional(),
 });

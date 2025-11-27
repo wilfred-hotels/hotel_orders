@@ -1,21 +1,12 @@
 "use client";
 
-import React from "react";
-import { DeliveryForm } from "@/components/checkout/DeliveryForm";
+import CheckoutForm from "@/components/checkout/DeliveryForm";
 import { Card } from "@/components/ui/card";
-import { OrderSummary, OrderItem } from "@/components/OrderSummary";
-import { PaymentForm } from "@/components/checkout/PaymentForm";
+import { OrderSummary } from "@/components/OrderSummary";
+import { useCartStore } from "@/store/useCartStore";
 
 export default function CheckoutPage() {
-  const mockCart: OrderItem[] = [
-    { id: 1, name: "Truffle Margherita Pizza", quantity: 2, price: 18.99 },
-    { id: 2, name: "Gourmet Beef Burger", quantity: 1, price: 16.99 },
-    { id: 3, name: "Chocolate Lava Cake", quantity: 3, price: 8.99 },
-  ];
-
-  const placeOrder = () => {
-    alert("Order placed successfully!");
-  };
+  const cartItems = useCartStore((state) => state.items);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -31,21 +22,14 @@ export default function CheckoutPage() {
               <h2 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">
                 Delivery Information
               </h2>
-              <DeliveryForm />
-            </Card>
-
-            <Card className="p-3 sm:p-4">
-              <h2 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">
-                Payment Method
-              </h2>
-              <PaymentForm />
+              <CheckoutForm />
             </Card>
           </div>
 
           {/* Order Summary */}
           <div className="lg:w-1/3 w-full">
             <div className="lg:sticky lg:top-8">
-              <OrderSummary items={mockCart} placeOrder={placeOrder} />
+              <OrderSummary items={cartItems} variant="checkout" />
             </div>
           </div>
         </div>

@@ -1,124 +1,114 @@
-"use client";
-
-import * as React from "react";
-import { useForm } from "react-hook-form";
+import React from "react";
+import { Button } from "@/components/ui/button";
 import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "../ui/form";
-import { Input } from "../ui/input";
-import { Textarea } from "../ui/textarea";
-import { Button } from "../ui/button";
 import { deliveryFormSchema } from "@/lib/schema/schema";
+import FormContent from "../Form/FormContent";
+import InputField from "../Form/InputField";
+import TextAreaField from "../Form/TextAreaField";
 
-// 2. Type inferred from schema
-type DeliveryFormValues = z.infer<typeof deliveryFormSchema>;
+type FormValues = z.infer<typeof deliveryFormSchema>;
 
-export function DeliveryForm() {
-  const form = useForm<DeliveryFormValues>({
-    resolver: zodResolver(deliveryFormSchema),
-    defaultValues: {
-      fullName: "",
-      address: "",
-      phone: "",
-      instructions: "",
-    },
-  });
+const paymentOptions = [
+  { id: "mpesa", label: "MPESA" },
+  { id: "airtel", label: "Airtel Money" },
+  { id: "card", label: "Visa / Mastercard" },
+  { id: "cod", label: "Cash on Delivery" },
+];
 
-  const onSubmit = (values: DeliveryFormValues) => {
-    console.log("Form values:", values);
-    // handle submission here
+export default function CheckoutForm() {
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = React.useState<
+    "mpesa" | "airtel" | "card" | "cod"
+  >("mpesa");
+
+  const handleSubmit = (values: FormValues) => {
+    console.log("Form submission:", values);
+    alert(`Payment method: ${selectedPaymentMethod}`);
   };
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <FormField
-          control={form.control}
-          name="fullName"
-          render={({ field }) => (
-            <FormItem className="w-full">
-              <FormLabel className="text-sm">Full Name</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="John Doe"
-                  {...field}
-                  className="w-full text-sm py-5"
-                />
-              </FormControl>
-              <FormMessage className="text-xs" />
-            </FormItem>
-          )}
-        />
+    <FormContent onSubmit={handleSubmit}>
+      <div className="space-y-5">
+        <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900">
+          Delivery Details
+        </h2>
 
-        <FormField
-          control={form.control}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <InputField
+            name="fullName"
+            label="Full Name *"
+            placeholder="John Doe"
+          />
+          <InputField
+            name="phone"
+            label="Phone Number *"
+            placeholder="07XX XXX XXX"
+          />
+        </div>
+
+        <InputField
           name="address"
-          render={({ field }) => (
-            <FormItem className="w-full">
-              <FormLabel className="text-sm">Delivery Address</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="123 Main St, City, State"
-                  {...field}
-                  className="w-full text-sm py-5"
-                />
-              </FormControl>
-              <FormMessage className="text-xs" />
-            </FormItem>
-          )}
+          label="Delivery Address *"
+          placeholder="123 Main St, City"
         />
-
-        <FormField
-          control={form.control}
-          name="phone"
-          render={({ field }) => (
-            <FormItem className="w-full">
-              <FormLabel className="text-sm">Phone Number</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="(555) 123-4567"
-                  {...field}
-                  className="w-full text-sm py-5"
-                />
-              </FormControl>
-              <FormMessage className="text-xs" />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
+        <TextAreaField
           name="instructions"
-          render={({ field }) => (
-            <FormItem className="w-full">
-              <FormLabel className="text-sm">Special Instructions</FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder="Any special delivery instructions..."
-                  rows={3}
-                  {...field}
-                  className="w-full text-sm"
-                />
-              </FormControl>
-              <FormMessage className="text-xs" />
-            </FormItem>
-          )}
+          label="Delivery Instructions"
+          placeholder="Any special instructions..."
         />
+      </div>
 
-        <Button
-          type="submit"
-          className="w-full bg-orange-600 hover:bg-orange-700 py-2 rounded-lg text-sm transition"
-        >
-          Submit
-        </Button>
-      </form>
-    </Form>
+      <div className="space-y-5">
+        <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900">
+          Payment Method
+        </h2>
+
+        <div className="flex flex-wrap gap-4">
+          {paymentOptions.map((method) => (
+            <div
+              key={method.id}
+              className={`flex-1 p-3 sm:p-4  rounded-lg border text-center cursor-pointer text-sm sm:text-base  transition-all ${
+                selectedPaymentMethod === method.id
+                  ? "border-[#FF5722] bg-[#FF5722]/10"
+                  : "border-gray-200 hover:border-gray-300"
+              }`}
+              onClick={() => setSelectedPaymentMethod(method.id as any)}
+            >
+              {method.label}
+            </div>
+          ))}
+        </div>
+
+        {selectedPaymentMethod === "mpesa" && (
+          <InputField
+            name="mobileAmount"
+            label="Enter phone number (MPESA)"
+            placeholder="0700xxxxxxx"
+          />
+        )}
+
+        {selectedPaymentMethod === "airtel" && (
+          <InputField
+            name="mobileAmount"
+            label="Enter phone number (Airtel Money)"
+            placeholder="0700xxxxxxx"
+          />
+        )}
+
+        {selectedPaymentMethod === "card" && (
+          <InputField
+            name="cardNumber"
+            label="Card Number"
+            placeholder="1234 5678 9012 3456"
+          />
+        )}
+      </div>
+
+      <Button
+        type="submit"
+        className="w-full py-3 sm:py-4 md:py-5 text-sm sm:text-base md:text-lg bg-orange-600 hover:bg-orange-700"
+      >
+        Complete Order
+      </Button>
+    </FormContent>
   );
 }

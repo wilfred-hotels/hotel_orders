@@ -5,15 +5,34 @@ import { ProductCard } from "../ProductCard";
 import { Carousel, CarouselContent, CarouselItem } from "../ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
 import { promotions } from "@/constants/promos";
+import { useCartStore } from "@/store/useCartStore";
+import { cartProduct } from "@/types/cart";
 
 export default function OffersSection() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const plugin = useRef(Autoplay({ delay: 3000, stopOnInteraction: false }));
 
+  const cartItems = useCartStore((s) => s.items);
+  const addItem = useCartStore((s) => s.addItem);
+
+  // Add to Cart
+  const addToCart = (item: cartProduct) => {
+    const exists = cartItems.some((i) => i.id === item.id);
+    if (!exists) {
+      addItem({
+        id: item.id,
+        name: item.name,
+        // price: parseFloat(item.price), converts price returned as string to number
+        price: item.price,
+        image: item.image,
+      });
+    }
+  };
+
   return (
     <section className="py-6 sm:py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 sm:mb-6">
+        <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">
           Special Offers
         </h2>
 
@@ -25,7 +44,7 @@ export default function OffersSection() {
             opts={{
               loop: true,
               align: "start",
-              slidesToScroll: 1,
+
               containScroll: "trimSnaps",
             }}
             className="w-full"
@@ -37,13 +56,11 @@ export default function OffersSection() {
                   className="pl-2 sm:pl-3 basis-full sm:basis-1/2 lg:basis-1/3"
                 >
                   <ProductCard
-                    id={promo.id}
-                    title={promo.title}
-                    description={promo.description}
-                    image={promo.image}
-                    discount={promo.discount}
-                    onButtonClick={() => console.log("Claim today!")}
-                    imagePriority={index < 3}
+                    key={promo.id}
+                    item={promo}
+                    isInCart={cartItems.some((i) => i.id === promo.id)}
+                    imagePriority={index < 4}
+                    onButtonClick={addToCart}
                   />
                 </CarouselItem>
               ))}

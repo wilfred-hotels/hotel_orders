@@ -246,6 +246,33 @@ body {
   --sidebar-ring: oklch(0.556 0 0);
 }
 
+/* Hide Next.js internal accessibility announcer */
+#next-route-announcer {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  margin: -1px !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  clip: rect(0 0 0 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+  background: transparent !important;
+  color: transparent !important;
+}
+
+/* Hide React/Next dev overlay leftovers (sometimes visible in dev) */
+[data-nextjs-router-manifest],
+[data-nextjs-react-dev-overlay-broadcast-channel],
+#__next-build-watcher,
+#__next_css_transform__,
+#__next-route-announcer {
+  background: transparent !important;
+  color: transparent !important;
+  border: none !important;
+}
+
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
