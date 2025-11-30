@@ -1,10 +1,13 @@
 export const categories = [
-  { id: "all", name: "All Items" },
-  { id: "pizza", name: "Pizza" },
-  { id: "burger", name: "Burgers" },
-  { id: "pasta", name: "Pasta" },
-  { id: "dessert", name: "Desserts" },
-  { id: "drinks", name: "Drinks" },
-  { id: "salad", name: "Salads" },
-  { id: "seafood", name: "Seafood" },
+  { id: "beverages", name: "Beverages" },
+  { id: "alcoholic", name: "Alcoholic Drinks" },
+  { id: "juices", name: "Juices" },
+  { id: "breakfast", name: "Breakfast" },
+  { id: "lunch", name: "Lunch" },
+  { id: "dinner", name: "Dinner" },
+  { id: "snacks", name: "Snacks" },
+  { id: "desserts", name: "Desserts" },
+  { id: "healthy", name: "Healthy" },
 ];
+
+export default categories;
