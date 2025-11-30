@@ -5,12 +5,13 @@ import { Button } from "@/components/ui/button";
 import { Star } from "lucide-react";
 import { useState } from "react";
 import { cartProduct } from "@/types/cart";
+import { Product } from "@/actions/types";
 
 export interface ProductCardProps {
-  item: cartProduct;
+  item: Product;
   isInCart: boolean;
   imagePriority?: boolean;
-  onButtonClick: (item: cartProduct) => void;
+  onButtonClick: (item: Product) => void;
 }
 
 export function ProductCard({
@@ -19,13 +20,13 @@ export function ProductCard({
   imagePriority,
   onButtonClick,
 }: ProductCardProps) {
-  const [imageError, setImageError] = useState(!item?.image);
+  // const [imageError, setImageError] = useState(!item?.image);
 
   return (
     <div className="bg-white rounded-xl shadow-md hover:shadow-lg overflow-hidden flex flex-col h-full">
       {/* Image */}
       <div className="relative w-full aspect-square md:aspect-4/3">
-        {item?.image && !imageError ? (
+        {/* {item?.image && !imageError ? (
           <Image
             src={item?.image}
             alt={item?.name}
@@ -38,16 +39,20 @@ export function ProductCard({
           <div className="w-full h-full bg-gray-200 flex items-center justify-center text-gray-600 text-sm font-bold p-2">
             {item?.name}
           </div>
-        )}
+        )} */}
+
+        <div className="w-full h-full bg-gray-200 flex items-center justify-center text-gray-600 text-sm font-bold p-2">
+            {item?.name}
+          </div>
 
         {/* Numeric promo badge */}
-        {item?.isPromo &&
+        {/* {item?.isPromo &&
           item?.discount &&
           typeof item?.discount === "number" && (
             <div className="absolute top-2 left-2 bg-red-500 text-white text-xs sm:text-xs md:text-sm font-semibold px-2 py-1 rounded shadow">
               {item?.discount}% OFF
             </div>
-          )}
+          )} */}
       </div>
 
       {/* Content */}
@@ -63,11 +68,11 @@ export function ProductCard({
             </h3>
 
             {/* String-based discount badge */}
-            {item?.discount && typeof item?.discount === "string" && (
+            {/* {item?.discount && typeof item?.discount === "string" && (
               <span className="bg-orange-600 text-white text-xs sm:text-xs md:text-sm font-bold px-2 py-1 rounded shadow ml-2 shrink-0">
                 {item?.discount}
               </span>
-            )}
+            )} */}
           </div>
 
           {/* Description */}
@@ -89,17 +94,17 @@ export function ProductCard({
                   ${item?.price.toFixed(2)}
                 </span>
 
-                {item?.isPromo && typeof item?.discount === "number" && (
+                {/* {item?.isPromo && typeof item?.discount === "number" && (
                   <span
                     className="ml-2 text-gray-400 line-through 
                    text-xs sm:text-sm md:text-base"
                   >
                     ${(item?.price * (1 + item?.discount / 100)).toFixed(2)}
                   </span>
-                )}
+                )} */}
               </div>
 
-              {item?.rating !== undefined && (
+              {/* {item?.rating !== undefined && (
                 <div className="flex items-center">
                   <Star className="w-3 h-3 sm:w-4 sm:h-4 text-yellow-400 fill-current shrink-0" />
                   <span
@@ -109,7 +114,7 @@ export function ProductCard({
                     {item?.rating}
                   </span>
                 </div>
-              )}
+              )} */}
             </div>
           )}
         </div>
@@ -127,8 +132,8 @@ export function ProductCard({
         >
           {isInCart
             ? "In Cart"
-            : item?.isPromo
-            ? "Claim Today's Offer"
+            // : item?.isPromo
+            // ? "Claim Today's Offer"
             : "Add to Cart"}
         </Button>
       </div>
