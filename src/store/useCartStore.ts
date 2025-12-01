@@ -1,64 +1,143 @@
-import { CartItem } from "@/types/cart";
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { persist, PersistOptions } from "zustand/middleware";
+import { productItem } from "@/lib/schema/catalogSchema";
+import { addItemToCart, updateCartItemQty } from "@/actions/cart";
 
-type CartStore = {
+// Cart item with quantity
+export type CartItem = {
+  id: string; // cart item ID
+  productId: number; // catalog product ID
+  quantity: number;
+  product: {
+    name: string;
+    price: number;
+  };
+};
+
+
+// Cart store type
+export type CartStore = {
+  userId: string;
   items: CartItem[];
-  addItem: (item: Omit<CartItem, "quantity">) => void;
-  removeItem: (id: number) => void;
-  increaseQty: (id: number) => void;
-  decreaseQty: (id: number) => void;
-  clearCart: () => void;
+
+  setUser: (userId: string) => void;
+  addItem: (item: CartItem) => Promise<void>;
+  removeItem: (id: string) => Promise<void>;
+  increaseQty: (id: string) => Promise<void>;
+  decreaseQty: (id: string) => Promise<void>;
+  clearCart: () => Promise<void>;
+
   totalItems: () => number;
   totalPrice: () => number;
 };
 
+// Persist config type
+type CartPersist = PersistOptions<CartStore>;
+
 export const useCartStore = create<CartStore>()(
-  persist(
-    (set, get) => ({
+  persist<CartStore>(
+    (set: (state: Partial<CartStore>) => void, get: () => CartStore) => ({
+      userId: "",
       items: [],
 
-      addItem: (item) =>
-        set((state) => {
-          const existing = state.items.find((i) => i.id === item.id);
-          if (existing) {
-            return {
-              items: state.items.map((i) =>
-                i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i
+      setUser: (userId: string) => set({ userId }),
+
+      addItem: async (item: CartItem) => {
+        try {
+          const { userId, items } = get();
+          if (!userId) throw new Error("User not set");
+
+          const existingItem = items.find((i) => i.id === item.id);
+          const quantityToAdd = 1;
+
+          if (existingItem) {
+            const updated = await updateCartItemQty(item.id, userId, "PUT");
+            set({
+              items: items.map((i: CartItem) =>
+                i.id === item.id ? { ...i, quantity: updated.quantity } : i
               ),
-            };
+            });
+          } else {
+            const updatedCart = await addItemToCart(userId, item.id, quantityToAdd);
+            set({
+              items: updatedCart.items.map((i: CartItem) => ({
+                ...i,
+                quantity: i.quantity,
+              })),
+            });
           }
-          return { items: [...state.items, { ...item, quantity: 1 }] };
-        }),
+        } catch (err) {
+          console.error("Failed to add item:", err);
+        }
+      },
 
-      removeItem: (id) =>
-        set((state) => ({
-          items: state.items.filter((i) => i.id !== id),
-        })),
+      increaseQty: async (id: string) => {
+        try {
+          const { userId, items } = get();
+          if (!userId) throw new Error("User not set");
 
-      increaseQty: (id) =>
-        set((state) => ({
-          items: state.items.map((i) =>
-            i.id === id ? { ...i, quantity: i.quantity + 1 } : i
-          ),
-        })),
+          const updated = await updateCartItemQty(id, userId, "PUT");
+          set({
+            items: items.map((i: CartItem) =>
+              i.id === id ? { ...i, quantity: updated.quantity } : i
+            ),
+          });
+        } catch (err) {
+          console.error("Failed to increase quantity:", err);
+        }
+      },
 
-      decreaseQty: (id) =>
-        set((state) => ({
-          items: state.items
-            .map((i) => (i.id === id ? { ...i, quantity: i.quantity - 1 } : i))
-            .filter((i) => i.quantity > 0),
-        })),
+      decreaseQty: async (id: string) => {
+        try {
+          const { userId, items } = get();
+          if (!userId) throw new Error("User not set");
 
-      clearCart: () => set({ items: [] }),
+          const updated = await updateCartItemQty(id, userId, "PUT");
+          set({
+            items:
+              updated.quantity <= 0
+                ? items.filter((i: CartItem) => i.id !== id)
+                : items.map((i: CartItem) =>
+                    i.id === id ? { ...i, quantity: updated.quantity } : i
+                  ),
+          });
+        } catch (err) {
+          console.error("Failed to decrease quantity:", err);
+        }
+      },
 
-      totalItems: () => get().items.reduce((t, i) => t + i.quantity, 0),
+      removeItem: async (id: string) => {
+        try {
+          const { userId, items } = get();
+          if (!userId) throw new Error("User not set");
 
+          await updateCartItemQty(id, userId, "DELETE");
+          set({
+            items: items.filter((i: CartItem) => i.id !== id),
+          });
+        } catch (err) {
+          console.error("Failed to remove item:", err);
+        }
+      },
+
+      clearCart: async () => {
+        try {
+          const { userId } = get();
+          if (!userId) throw new Error("User not set");
+
+          await fetch(`/cart/clear?userId=${userId}`, { method: "POST" });
+          set({ items: [] });
+        } catch (err) {
+          console.error("Failed to clear cart:", err);
+        }
+      },
+
+      totalItems: () => get().items.reduce((t, i: CartItem) => t + i.quantity, 0),
       totalPrice: () =>
-        get().items.reduce((t, i) => t + i.price * i.quantity, 0),
+        get().items.reduce((t, i: CartItem) => t + i.product.price * i.quantity, 0),
     }),
     {
-      name: "cart-storage", // key in localStorage
-    }
+      name: "cart-storage",
+    } as CartPersist
   )
 );
