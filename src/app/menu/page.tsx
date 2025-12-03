@@ -2,16 +2,13 @@
 
 import { ProductCard } from "@/components/ProductCard";
 import { useState } from "react";
-import { filterByCategory } from "../../../utils/filterItems";
-import { combinedFeaturedAndMenuItems } from "@/constants/menu";
 import SortingDropdown from "@/components/menu/SortingDropdown";
 import { useCartStore } from "@/store/useCartStore";
-import { cartProduct } from "@/types/cart";
 import FiltersWrapper from "@/components/menu/FiltersWrapper";
 import MobileFiltersDrawer from "@/components/menu/MobileFiltersDrawer";
-import { useProduct } from "@/hooks/useProductsHook";
 import { ProductCardSkeleton } from "@/components/ProductCardSkeleton";
-import { Product } from "@/actions/types";
+import { useHandleAddToCart } from "@/hooks/useCartHandlers";
+import { useGetCatalog } from "@/hooks/useCatalogHook";
 
 export default function MenuPage() {
   const [selectedCategory, setSelectedCategory] = useState("");
@@ -19,28 +16,20 @@ export default function MenuPage() {
   const [sortBy, setSortBy] = useState("popular");
   const [drawerOpen, setDrawerOpen] = useState(false);
 
-  const { data: products, isLoading, isError } = useProduct();
-
-  const productItem = products ?? [];
-
-  // const filteredMenu = filterByCategory(
-  //   productItem,
-  //   selectedCategory
-  // );
+  const { data: catalogs, isLoading, isError } = useGetCatalog();
+  const catalogItems = catalogs ?? [];
 
   const cartItems = useCartStore((s) => s.items);
-  const addItem = useCartStore((s) => s.addItem);
+  const addToCart = useHandleAddToCart();
 
-  const addToCart = (item: Product) => {
-    const exists = cartItems.some((i) => i.id === item.id);
-    if (!exists) {
-      addItem({
-        id: item.id,
-        name: item.name,
-        price: item.price,
-        // image: item.image,
-      });
-    }
+  const handleAddToCart = async (item: (typeof catalogItems)[number]) => {
+    const product = {
+      id: item.id,
+      name: item.name,
+      price: item.finalPriceCents / 100,
+    };
+
+    await addToCart(product);
   };
 
   return (
@@ -65,29 +54,28 @@ export default function MenuPage() {
               onOpenFilters={() => setDrawerOpen(true)}
             />
 
-            {/* Desktop sidebar */}
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
+            <div>
               {isError ? (
                 <div className="text-center py-12 text-red-500">
                   Failed to load menu items. Please try again
                 </div>
-              ): (
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-                  {isLoading ? (
-                     Array.from({ length: 8 }).map((_, i) => (
-                  <ProductCardSkeleton key={i} />
-                ))
-                  ): (
-                    productItem.map((item, index) => (
-                <ProductCard
-                  key={item.id}
-                  item={item}
-                  isInCart={cartItems.some((i) => i.id === item.id)}
-                  imagePriority={index < 4}
-                  onButtonClick={addToCart}
-                />
-              ))
-                  )}
+              ) : (
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
+                  {isLoading
+                    ? Array.from({ length: 8 }).map((_, i) => (
+                        <ProductCardSkeleton key={i} />
+                      ))
+                    : catalogItems.map((item, index) => (
+                        <ProductCard
+                          key={item.id}
+                          item={item}
+                          isInCart={cartItems.some(
+                            (i) => i.productId === item.id
+                          )}
+                          imagePriority={index < 4}
+                          onButtonClick={() => handleAddToCart(item)}
+                        />
+                      ))}
                 </div>
               )}
             </div>
